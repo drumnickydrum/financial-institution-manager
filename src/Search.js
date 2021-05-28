@@ -59,7 +59,7 @@ export const Search = () => {
   );
 };
 
-const searchFormText = {
+export const searchFormText = {
   instruction: "I'm looking for a financial institution in...",
   placeholder: 'Zip',
   submitBtn: 'Search',
