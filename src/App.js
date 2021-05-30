@@ -1,6 +1,6 @@
 import { BrowserRouter, Redirect, Route } from 'react-router-dom';
-import { ContextProvider } from './Context';
-import { Search } from './Search';
+import { ContextProvider } from 'store/Context';
+import { Search } from 'pages/Search';
 
 export const PATHS = {
   BASE: '/',

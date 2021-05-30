@@ -1,38 +1,45 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
-import { useState, useEffect, useContext } from 'react';
-import { useHistory } from 'react-router';
-import { Context, SetContext } from './Context';
-import { PATHS } from './App';
+import { useState, useContext } from 'react';
+import { Context } from 'store/Context';
+import { searchByZip } from 'store/actions/searchByZip';
 
 export const Search = () => {
-  const history = useHistory();
-  const { setZip } = useContext(SetContext);
   const { zip, favorites } = useContext(Context);
-  const [zipInput, setZipInput] = useState(zip);
+  const [zipInput, setZIPInput] = useState(zip);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    setError('');
-  }, [zipInput]);
+  const [noResults, setNoResults] = useState(false);
 
   const zipChange = ({ target: { value } }) => {
-    if (!value) return setZipInput('');
+    if (!value) return setZIPInput('');
     if (value.length > 5) return;
     if (value.match(/\D/gi)) return;
-    setZipInput(value);
+    setZIPInput(value);
+    if (error) setError('');
   };
 
-  const search = (e) => {
+  const search = async (e) => {
     e.preventDefault();
     if (!zipInput || zipInput.length < 5) return setError(searchFormText.errors.length);
-    setZip(zipInput);
-    history.push(PATHS.RESULTS);
+    // spinner or results page skeleton
+    const result = await searchByZip(zipInput);
+    console.log(result);
+    // if zip was invalid -> setError(invalid)
+    // else if fdic rejected -> setNetworkError(true) "network error, please try again"
+    // else if no results -> setNoResults(true) and conditionally render the nearby option
   };
 
   return (
     <Container maxWidth='sm'>
+      {noResults && (
+        <>
+          <Button variant='contained' color='primary'>
+            {searchFormText.nearbyBtn}
+          </Button>
+          <Typography variant='h4'>or</Typography>
+        </>
+      )}
       <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>
-        {searchFormText.instruction}
+        {noResults ? searchFormText.noResultsInstruction : searchFormText.instruction}
       </Typography>
       <form onSubmit={search} style={{ display: 'flex', flexDirection: 'column' }}>
         <TextField
@@ -61,8 +68,10 @@ export const Search = () => {
 
 export const searchFormText = {
   instruction: "I'm looking for a financial institution in...",
-  placeholder: 'Zip',
+  noResultsInstruction: 'Enter another ZIP code...',
+  placeholder: 'ZIP',
   submitBtn: 'Search',
+  nearbyBtn: 'Search Nearby ZIP Codes',
   favoritesBtn: 'My Favorites',
   errors: {
     length: 'Please enter a 5-digit U.S. zip code',
