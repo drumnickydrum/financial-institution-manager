@@ -1,45 +1,65 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Context } from 'store/Context';
 import { searchByZip } from 'store/actions/searchByZip';
+import { ResultsPending } from './ResultsPending';
+import { useHistory } from 'react-router';
+import { PATHS } from 'App';
 
 export const Search = () => {
-  const { zip, favorites } = useContext(Context);
-  const [zipInput, setZIPInput] = useState(zip);
+  const history = useHistory();
+  const { favorites } = useContext(Context);
+  const [zipInput, setZipInput] = useState('');
+  const [noResults, setNoResults] = useState(null);
   const [error, setError] = useState('');
-  const [noResults, setNoResults] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!loading) return;
+    if (error || noResults) setLoading(false);
+  }, [error, noResults, loading]);
 
   const zipChange = ({ target: { value } }) => {
-    if (!value) return setZIPInput('');
+    if (!value) return setZipInput('');
     if (value.length > 5) return;
     if (value.match(/\D/gi)) return;
-    setZIPInput(value);
+    setZipInput(value);
     if (error) setError('');
   };
 
   const search = async (e) => {
     e.preventDefault();
     if (!zipInput || zipInput.length < 5) return setError(searchFormText.errors.length);
-    // spinner or results page skeleton
-    const result = await searchByZip(zipInput);
-    console.log(result);
-    // if zip was invalid -> setError(invalid)
-    // else if fdic rejected -> setNetworkError(true) "network error, please try again"
-    // else if no results -> setNoResults(true) and conditionally render the nearby option
+    setLoading(true);
+    const data = await searchByZip(zipInput);
+    if (data.errors.zip) setError(`${zipInput}${searchFormText.errors.invalid}`);
+    else if (data.errors.fdic) setError(searchFormText.errors.network);
+    else if (data.results.fdic.length === 0) setNoResults(zipInput);
+    else history.push(PATHS.RESULTS);
   };
 
-  return (
+  const searchNearby = async (e) => {
+    // search nearby zips
+  };
+
+  return loading ? (
+    <ResultsPending />
+  ) : (
     <Container maxWidth='sm'>
       {noResults && (
         <>
-          <Button variant='contained' color='primary'>
+          <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>
+            {searchFormText.noResults}
+            {noResults}
+          </Typography>
+          <Button variant='contained' color='primary' onClick={searchNearby}>
             {searchFormText.nearbyBtn}
           </Button>
           <Typography variant='h4'>or</Typography>
         </>
       )}
       <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>
-        {noResults ? searchFormText.noResultsInstruction : searchFormText.instruction}
+        {noResults ? searchFormText.instructionNoResults : searchFormText.instruction}
       </Typography>
       <form onSubmit={search} style={{ display: 'flex', flexDirection: 'column' }}>
         <TextField
@@ -67,8 +87,9 @@ export const Search = () => {
 };
 
 export const searchFormText = {
+  noResults: 'No results for ',
   instruction: "I'm looking for a financial institution in...",
-  noResultsInstruction: 'Enter another ZIP code...',
+  instructionNoResults: 'Enter another ZIP code...',
   placeholder: 'ZIP',
   submitBtn: 'Search',
   nearbyBtn: 'Search Nearby ZIP Codes',
@@ -76,5 +97,6 @@ export const searchFormText = {
   errors: {
     length: 'Please enter a 5-digit U.S. zip code',
     invalid: ' is an invalid U.S. zip code',
+    network: 'Network error, please try again',
   },
 };

@@ -1,10 +1,10 @@
-export const VALID_ZIP = '90210';
-export const INVALID_ZIP = 'INVALID_ZIP';
-export const INVALID_ZIP_LENGTH = '9021';
-export const ZIP_NO_RESULTS = { results: { error: 'error' } };
-export const ZIP_RESULTS = {
+export const ZIP_INVALID_RESPONSE = { results: { error: 'error' } };
+export const ZIP_INVALID_RETURN = [];
+export const ZIP_VALID_RESPONSE = {
   results: [{ code: '90210' }, { code: '90209' }, { code: '90213' }],
 };
+export const ZIP_VALID_RETURN = [{ code: '90210' }, { code: '90209' }, { code: '90213' }];
+
 export const FDIC_NO_RESULTS_RESPONSE = { data: [], totals: { count: 0 } };
 export const FDIC_NO_RESULTS_RETURN = [];
 export const FDIC_RESULTS_RESPONSE = { data: [{ zip: '90210' }], totals: { count: 1 } };

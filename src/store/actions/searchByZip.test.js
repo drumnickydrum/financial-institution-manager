@@ -1,24 +1,29 @@
 import '@testing-library/jest-dom/extend-expect';
-import nock from 'nock';
-import { FDIC_API, INSTITUTIONS_ENDPOINT, RADIUS_ENDPOINT, ZIPCODES_API } from 'network';
 import {
-  VALID_ZIP,
   INVALID_ZIP,
-  ZIP_RESULTS,
-  ZIP_NO_RESULTS,
-  FDIC_RESULTS_RESPONSE,
-  FDIC_NO_RESULTS_RESPONSE,
+  ZIP_REJECTS,
+  FDIC_REJECTS,
+  VALID_ZIP_WITH_RESULTS,
+  VALID_ZIP_NO_RESULTS,
+} from 'test/inputs';
+import {
   FDIC_RESULTS_RETURN,
-} from 'test/mock/mock';
+  FDIC_NO_RESULTS_RETURN,
+  ZIP_VALID_RETURN,
+} from 'test/responses';
+import { FDIC_API_MOCK, ZIP_API_MOCK } from 'test/setupTests';
 import { searchByZip } from './searchByZip';
 
 describe('searchByZip()', () => {
+  beforeEach(() => {
+    ZIP_API_MOCK();
+    FDIC_API_MOCK();
+  });
+
   describe('zip api rejects', () => {
     let data;
     beforeEach(async () => {
-      ZIP_REJECTS();
-      FDIC_FULFILLS_VALID();
-      data = await searchByZip(VALID_ZIP);
+      data = await searchByZip(ZIP_REJECTS);
     });
 
     it("doesn't throw an error", async () => {
@@ -35,57 +40,34 @@ describe('searchByZip()', () => {
   });
 
   describe('FDIC api rejects', () => {
-    let data;
-    beforeEach(async () => {
-      ZIP_FULFILLS_VALID();
-      FDIC_REJECTS();
-      data = await searchByZip(VALID_ZIP);
-    });
-
-    it('returns an error', () => {
+    it('returns an error', async () => {
+      const data = await searchByZip(FDIC_REJECTS);
       expect(data.errors.fdic).toBeTruthy();
     });
   });
 
   describe('Invalid ZIP code', () => {
-    let data;
-    beforeEach(async () => {
-      ZIP_FULFILLS_INVALID();
-      FDIC_FULFILLS_INVALID();
-      data = await searchByZip(INVALID_ZIP);
-    });
-
-    it('returns an error for zip', () => {
+    it('returns an error for zip', async () => {
+      const data = await searchByZip(INVALID_ZIP);
       expect(data.errors.zip).toBeTruthy();
     });
   });
+
+  describe('Valid ZIP code', () => {
+    it('returns results without errors', async () => {
+      const data = await searchByZip(VALID_ZIP_WITH_RESULTS);
+      expect(data.errors.zip).toBeFalsy();
+      expect(data.errors.fdic).toBeFalsy();
+      expect(data.results.zip).toEqual(ZIP_VALID_RETURN);
+      expect(data.results.fdic).toEqual(FDIC_RESULTS_RETURN);
+    });
+
+    it('returns no results without errors', async () => {
+      const data = await searchByZip(VALID_ZIP_NO_RESULTS);
+      expect(data.errors.zip).toBeFalsy();
+      expect(data.errors.fdic).toBeFalsy();
+      expect(data.results.zip).toEqual(ZIP_VALID_RETURN);
+      expect(data.results.fdic).toEqual(FDIC_NO_RESULTS_RETURN);
+    });
+  });
 });
-
-/**
- *  Mock fetch responses
- */
-const headers = { 'Access-Control-Allow-Origin': '*' };
-
-function ZIP_FULFILLS_VALID() {
-  nock(ZIPCODES_API).get(RADIUS_ENDPOINT(VALID_ZIP)).reply(200, ZIP_RESULTS, headers);
-}
-function ZIP_FULFILLS_INVALID() {
-  nock(ZIPCODES_API).get(RADIUS_ENDPOINT(INVALID_ZIP)).reply(200, ZIP_NO_RESULTS, headers); // no 404 on invalid zip
-}
-function ZIP_REJECTS() {
-  nock(ZIPCODES_API).get(RADIUS_ENDPOINT(VALID_ZIP)).reply(400, 'error', headers);
-}
-
-function FDIC_FULFILLS_VALID() {
-  nock(FDIC_API)
-    .get(INSTITUTIONS_ENDPOINT(VALID_ZIP))
-    .reply(200, FDIC_RESULTS_RESPONSE, headers);
-}
-function FDIC_FULFILLS_INVALID() {
-  nock(FDIC_API)
-    .get(INSTITUTIONS_ENDPOINT(INVALID_ZIP))
-    .reply(200, FDIC_NO_RESULTS_RESPONSE, headers); // no 404 if no results
-}
-function FDIC_REJECTS() {
-  nock(FDIC_API).get(INSTITUTIONS_ENDPOINT(VALID_ZIP)).reply(400, 'error', headers);
-}
