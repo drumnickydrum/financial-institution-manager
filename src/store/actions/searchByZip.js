@@ -8,6 +8,7 @@ export const searchByZip = async (zip) => {
   try {
     const promises = [fetchZIP(zip), fetchFDIC(zip)];
     const [zipRes, fdicRes] = await Promise.allSettled(promises);
+
     if (fdicRes.value.error) throw new Error('fdic rejected');
     payload.results.fdic = fdicRes.value.data;
 
