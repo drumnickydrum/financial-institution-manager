@@ -2,6 +2,7 @@ import { BrowserRouter, Redirect, Route } from 'react-router-dom';
 import { ContextProvider } from 'store/Context';
 import { Search } from 'pages/Search';
 import { SearchResultsProvider } from 'store/SearchResults';
+import { Results } from 'pages/Results';
 
 export const PATHS = {
   BASE: '/',
@@ -29,10 +30,6 @@ function App() {
 }
 
 export default App;
-
-function Results() {
-  return 'Results';
-}
 
 function Favorites() {
   return 'Favorites';

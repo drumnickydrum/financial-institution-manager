@@ -7,9 +7,9 @@ export const getSS = (field) => JSON.parse(sessionStorage.getItem(field));
 export const setSS = (field, value) => sessionStorage.setItem(field, JSON.stringify(value));
 
 export const useStateAndLS = (key, INITIAL_STATE) => {
-  const [value, setValue] = useState(INITIAL_STATE);
+  const [value, setValue] = useState(getLS(key) || INITIAL_STATE);
   useEffect(() => {
-    setLS('key', value);
-  }, [value]);
+    setLS(key, value);
+  }, [key, value]);
   return [value, setValue];
 };

@@ -4,14 +4,42 @@ export const ZIP_VALID_RESPONSE = {
   results: [{ code: '90210' }, { code: '90209' }, { code: '90213' }],
 };
 export const ZIP_VALID_RETURN = ['90209', '90213'];
+export const ZIP_NEARBY_RESPONSE = {
+  results: [{ code: '90213' }],
+};
+export const ZIP_NEARBY_RETURN = ['90213'];
 export const ZIP_NO_NEARBY_RESPONSE = {
   results: [{ code: '90210' }],
 };
 
 export const FDIC_NO_RESULTS_RESPONSE = { data: [], totals: { count: 0 } };
 export const FDIC_NO_RESULTS_RETURN = [];
-export const FDIC_RESULTS_RESPONSE = { data: [{ zip: '90210' }], totals: { count: 1 } };
-export const FDIC_RESULTS_RETURN = [{ zip: '90210' }];
+export const FDIC_RESULTS_RESPONSE = {
+  data: [
+    { data: { ZIP: '90210', NAME: 'BANK1' } },
+    { data: { ZIP: '90210', NAME: 'BANK2' } },
+    { data: { ZIP: '90210', NAME: 'BANK3' } },
+  ],
+  totals: { count: 3 },
+};
+export const FDIC_RESULTS_RETURN = [
+  { ZIP: '90210', NAME: 'BANK1' },
+  { ZIP: '90210', NAME: 'BANK2' },
+  { ZIP: '90210', NAME: 'BANK3' },
+];
+export const FDIC_NEARBY_RESPONSE = {
+  data: [
+    { data: { ZIP: '90209', NAME: 'BANK4' } },
+    { data: { ZIP: '90209', NAME: 'BANK5' } },
+    { data: { ZIP: '90209', NAME: 'BANK6' } },
+  ],
+  totals: { count: 3 },
+};
+export const FDIC_NEARBY_RETURN = [
+  { ZIP: '90209', NAME: 'BANK4' },
+  { ZIP: '90209', NAME: 'BANK5' },
+  { ZIP: '90209', NAME: 'BANK6' },
+];
 
 // Ex: ZIP code api responds with no results
 // {

@@ -73,7 +73,7 @@ const verifyInput = (zipInput, userInput) => {
   expect(zipInput).toHaveValue(userInput);
 };
 
-const input = (zipInput, userInput) => {
+export const input = (zipInput, userInput) => {
   fireEvent.change(zipInput, {
     target: { value: String(userInput) },
   });

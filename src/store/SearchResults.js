@@ -1,4 +1,6 @@
-import { createContext } from 'react';
+import { PATHS } from 'App';
+import { createContext, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { getLS, useStateAndLS } from 'utils/storage';
 
 const INITIAL_STATE = {
@@ -10,7 +12,16 @@ const INITIAL_STATE = {
 export const SetSearchResults = createContext();
 export const SearchResults = createContext();
 export const SearchResultsProvider = ({ children }) => {
-  const [searchResults, setSearchResults] = useStateAndLS(INITIAL_STATE);
+  const history = useHistory();
+  const [searchResults, setSearchResults] = useStateAndLS('searchResults', INITIAL_STATE);
+
+  // update state before forwarding to results page, then reset flag
+  useEffect(() => {
+    if (searchResults.fwd) {
+      history.push(PATHS.RESULTS);
+      setSearchResults((prev) => ({ ...prev, fwd: false }));
+    }
+  }, [history, searchResults.fwd, setSearchResults]);
 
   return (
     <SetSearchResults.Provider value={setSearchResults}>
@@ -18,26 +29,3 @@ export const SearchResultsProvider = ({ children }) => {
     </SetSearchResults.Provider>
   );
 };
-
-/**
- *
- *      {
- *          zip: [90210, 90209, 90208],
- *          fdic: {
- *              90210: [
- *              {
- *                  zip: 90210,
- *                  name: a bank,
- *              },
- *              {
- *                  zip: 90210,
- *                  name: b bank,
- *              },
- *              {
- *                  zip: 90210,
- *                  name: c bank,
- *              },
- *          ]
- *      }
- *
- */

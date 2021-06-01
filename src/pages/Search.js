@@ -1,18 +1,14 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
 import { useState, useContext, useEffect } from 'react';
 import { Context } from 'store/Context';
-import { searchByZip } from 'store/actions/searchByZip';
+import { searchByZip, searchByZipMultiple } from 'store/actions/searchByZip';
 import { ResultsPending } from './ResultsPending';
-import { useHistory } from 'react-router';
-import { PATHS } from 'App';
-import { SearchResults, SetSearchResults } from 'store/SearchResults';
+import { SetSearchResults } from 'store/SearchResults';
 
 export const Search = () => {
-  const history = useHistory();
-
   const { favorites } = useContext(Context);
-  const searchResults = useContext(SearchResults);
   const setSearchResults = useContext(SetSearchResults);
+  const [nearbyZips, setNearbyZips] = useState([]);
 
   const [zipInput, setZipInput] = useState('');
   const [noResults, setNoResults] = useState(null);
@@ -39,22 +35,31 @@ export const Search = () => {
     const data = await searchByZip(zipInput);
     if (data.errors.zip) setError(`${zipInput}${searchFormText.errors.invalid}`);
     else if (data.errors.fdic) setError(searchFormText.errors.network);
-    else if (data.results.fdic.length === 0) setNoResults(zipInput);
-    else history.push(PATHS.RESULTS);
-    setSearchResults({
-      zipSearched: zipInput,
-      nearbyZips: data.results.zip,
-      fdic: data.results.fdic,
-    });
+    else if (data.results.fdic.length === 0) {
+      setNoResults(zipInput);
+      setNearbyZips(data.results.zip);
+    } else {
+      setSearchResults({
+        zipSearched: zipInput,
+        nearbyZips: data.results.zip,
+        fdicResults: data.results.fdic,
+        fwd: true,
+      });
+    }
   };
 
   const searchNearby = async (e) => {
     setLoading(true);
-    const data = await searchByZip(searchResults.nearbyZips.splice(0, 3));
+    const data = await searchByZipMultiple(nearbyZips.splice(0, 5));
     if (data.error?.match(/rejected/)) setError(searchFormText.errors.network);
-    if (data.error?.match(/results/)) setNoResults(searchResults.nearbyZips.join());
-    else history.push(PATHS.RESULTS);
-    setSearchResults((prev) => ({ ...prev, fdic: data.results }));
+    if (data.error?.match(/results/)) setNoResults(nearbyZips.join());
+    else
+      setSearchResults({
+        zipSearched: zipInput,
+        nearbyZips: [],
+        fdicResults: data.results,
+        fwd: true,
+      });
   };
 
   return loading ? (
@@ -67,7 +72,7 @@ export const Search = () => {
             {searchFormText.noResults}
             {noResults}
           </Typography>
-          {searchResults.nearbyZips?.length > 0 && (
+          {nearbyZips?.length > 0 && (
             <>
               <Button variant='contained' color='primary' onClick={searchNearby}>
                 {searchFormText.nearbyBtn}

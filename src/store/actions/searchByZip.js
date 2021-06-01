@@ -10,10 +10,13 @@ export const searchByZip = async (zip) => {
     const [zipRes, fdicRes] = await Promise.allSettled(promises);
 
     if (fdicRes.value.error) throw new Error('fdic rejected');
-    payload.results.fdic = fdicRes.value.data;
+    if (fdicRes.value.data.length > 0)
+      payload.results.fdic = fdicRes.value.data.map((data) => data.data);
+
     if (!zipRes.value.error) {
       if (zipRes.value.results.error) throw new Error('invalid zip');
-      payload.results.zip = zipRes.value.results.splice(1).map((result, i) => result.code); // omit zipSearched
+      if (zipRes.value.results.length > 0)
+        payload.results.zip = zipRes.value.results.splice(1).map((result) => result.code); // omit zipSearched
     }
   } catch (e) {
     if (e.message.match(/fdic/)) {
@@ -48,6 +51,8 @@ export const searchByZipMultiple = async (zips) => {
         payload.results.push(...result.value.data);
       }
     }
+    if (payload.results.length > 0)
+      payload.results = payload.results.map((result) => result.data);
     if (rejected === NUM_ZIPS) throw new Error('fdic rejected');
     if (noResults === NUM_ZIPS) throw new Error('no results');
   } catch (e) {
