@@ -5,10 +5,15 @@ import { searchByZip } from 'store/actions/searchByZip';
 import { ResultsPending } from './ResultsPending';
 import { useHistory } from 'react-router';
 import { PATHS } from 'App';
+import { SearchResults, SetSearchResults } from 'store/SearchResults';
 
 export const Search = () => {
   const history = useHistory();
+
   const { favorites } = useContext(Context);
+  const searchResults = useContext(SearchResults);
+  const setSearchResults = useContext(SetSearchResults);
+
   const [zipInput, setZipInput] = useState('');
   const [noResults, setNoResults] = useState(null);
   const [error, setError] = useState('');
@@ -36,10 +41,20 @@ export const Search = () => {
     else if (data.errors.fdic) setError(searchFormText.errors.network);
     else if (data.results.fdic.length === 0) setNoResults(zipInput);
     else history.push(PATHS.RESULTS);
+    setSearchResults({
+      zipSearched: zipInput,
+      nearbyZips: data.results.zip,
+      fdic: data.results.fdic,
+    });
   };
 
   const searchNearby = async (e) => {
-    // search nearby zips
+    setLoading(true);
+    const data = await searchByZip(searchResults.nearbyZips.splice(0, 3));
+    if (data.error?.match(/rejected/)) setError(searchFormText.errors.network);
+    if (data.error?.match(/results/)) setNoResults(searchResults.nearbyZips.join());
+    else history.push(PATHS.RESULTS);
+    setSearchResults((prev) => ({ ...prev, fdic: data.results }));
   };
 
   return loading ? (
@@ -52,10 +67,14 @@ export const Search = () => {
             {searchFormText.noResults}
             {noResults}
           </Typography>
-          <Button variant='contained' color='primary' onClick={searchNearby}>
-            {searchFormText.nearbyBtn}
-          </Button>
-          <Typography variant='h4'>or</Typography>
+          {searchResults.nearbyZips?.length > 0 && (
+            <>
+              <Button variant='contained' color='primary' onClick={searchNearby}>
+                {searchFormText.nearbyBtn}
+              </Button>
+              <Typography variant='h4'>or</Typography>
+            </>
+          )}
         </>
       )}
       <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>

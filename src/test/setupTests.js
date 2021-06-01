@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/extend-expect';
 import nock from 'nock';
 import { FDIC_API, ZIPCODES_API } from 'network';
 import {
+  ZIP_NO_NEARBY,
   INVALID_ZIP,
   VALID_ZIP_WITH_RESULTS,
   VALID_ZIP_NO_RESULTS,
@@ -13,6 +14,7 @@ import {
   FDIC_NO_RESULTS_RESPONSE,
   ZIP_VALID_RESPONSE,
   ZIP_INVALID_RESPONSE,
+  ZIP_NO_NEARBY_RESPONSE,
 } from './responses';
 
 nock.disableNetConnect(); // throw error if req on un-mocked url
@@ -36,7 +38,10 @@ export const ZIP_API_MOCK = () =>
     .reply(500, 'error', headers)
     //
     .get((uri) => uri.includes(FDIC_REJECTS))
-    .reply(200, ZIP_VALID_RESPONSE, headers);
+    .reply(200, ZIP_VALID_RESPONSE, headers)
+    //
+    .get((uri) => uri.includes(ZIP_NO_NEARBY))
+    .reply(200, ZIP_NO_NEARBY_RESPONSE, headers);
 
 export const FDIC_API_MOCK = () =>
   nock(FDIC_API)
@@ -54,4 +59,7 @@ export const FDIC_API_MOCK = () =>
     .reply(500, 'error', headers)
     //
     .get((uri) => uri.includes(ZIP_REJECTS))
-    .reply(200, FDIC_RESULTS_RESPONSE, headers);
+    .reply(200, FDIC_RESULTS_RESPONSE, headers)
+    //
+    .get((uri) => uri.includes(ZIP_NO_NEARBY))
+    .reply(200, FDIC_NO_RESULTS_RESPONSE, headers);

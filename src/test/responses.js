@@ -3,7 +3,10 @@ export const ZIP_INVALID_RETURN = [];
 export const ZIP_VALID_RESPONSE = {
   results: [{ code: '90210' }, { code: '90209' }, { code: '90213' }],
 };
-export const ZIP_VALID_RETURN = [{ code: '90210' }, { code: '90209' }, { code: '90213' }];
+export const ZIP_VALID_RETURN = ['90209', '90213'];
+export const ZIP_NO_NEARBY_RESPONSE = {
+  results: [{ code: '90210' }],
+};
 
 export const FDIC_NO_RESULTS_RESPONSE = { data: [], totals: { count: 0 } };
 export const FDIC_NO_RESULTS_RETURN = [];

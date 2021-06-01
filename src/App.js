@@ -1,6 +1,7 @@
 import { BrowserRouter, Redirect, Route } from 'react-router-dom';
 import { ContextProvider } from 'store/Context';
 import { Search } from 'pages/Search';
+import { SearchResultsProvider } from 'store/SearchResults';
 
 export const PATHS = {
   BASE: '/',
@@ -15,11 +16,13 @@ function App() {
   return (
     <BrowserRouter basename='/'>
       <ContextProvider>
-        <Route path={PATHS.BASE} exact render={() => <Redirect to={PATHS.START} />} />
-        <Route path={PATHS.SEARCH} component={Search} />
-        <Route path={PATHS.RESULTS} component={Results} />
-        <Route path={PATHS.FAVORITES} component={Favorites} />
-        <Route path={`${PATHS.INSTITUTION}:id`} component={Institution} />
+        <SearchResultsProvider>
+          <Route path={PATHS.BASE} exact render={() => <Redirect to={PATHS.START} />} />
+          <Route path={PATHS.SEARCH} component={Search} />
+          <Route path={PATHS.RESULTS} component={Results} />
+          <Route path={PATHS.FAVORITES} component={Favorites} />
+          <Route path={`${PATHS.INSTITUTION}:id`} component={Institution} />
+        </SearchResultsProvider>
       </ContextProvider>
     </BrowserRouter>
   );

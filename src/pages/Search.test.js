@@ -7,6 +7,7 @@ import {
   INVALID_ZIP_LENGTH,
   VALID_ZIP_WITH_RESULTS,
   VALID_ZIP_NO_RESULTS,
+  ZIP_NO_NEARBY,
 } from 'test/inputs';
 import { searchFormText } from 'pages/Search';
 import { resultsPendingText } from './ResultsPending';
@@ -44,11 +45,19 @@ describe('Search Page', () => {
     await screen.findByText((content) => content.match(searchFormText.errors.invalid));
   });
 
-  it('Provides nearby search option if no results', async () => {
+  it('Provides nearby search option if available', async () => {
     input(zipInput, VALID_ZIP_NO_RESULTS);
     userEvent.click(submitBtn);
     await screen.findByText((content) => content.match(searchFormText.noResults));
-    await screen.findByText((content) => content.match(searchFormText.nearbyBtn));
+    screen.getByText(searchFormText.nearbyBtn);
+  });
+
+  it("Doesn't provide nearby search option if unavailable", async () => {
+    input(zipInput, ZIP_NO_NEARBY);
+    userEvent.click(submitBtn);
+    await screen.findByText((content) => content.match(searchFormText.noResults));
+    const nearbyBtn = screen.queryByText(searchFormText.nearbyBtn);
+    expect(nearbyBtn).toBeNull();
   });
 
   it('Displays loading screen during search', () => {
