@@ -3,6 +3,7 @@ import { ContextProvider } from 'store/Context';
 import { Search } from 'pages/Search';
 import { SearchResultsProvider } from 'store/SearchResults';
 import { Results } from 'pages/Results';
+import { CssBaseline } from '@material-ui/core';
 
 export const PATHS = {
   BASE: '/',
@@ -18,6 +19,7 @@ function App() {
     <BrowserRouter basename='/'>
       <ContextProvider>
         <SearchResultsProvider>
+          <CssBaseline />
           <Route path={PATHS.BASE} exact render={() => <Redirect to={PATHS.START} />} />
           <Route path={PATHS.SEARCH} component={Search} />
           <Route path={PATHS.RESULTS} component={Results} />

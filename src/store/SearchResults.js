@@ -1,5 +1,6 @@
 import { PATHS } from 'App';
-import { createContext, useEffect } from 'react';
+import { useIsInitial } from 'hooks/useIsInitial';
+import { createContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { getLS, useStateAndLS } from 'utils/storage';
 
@@ -14,14 +15,21 @@ export const SearchResults = createContext();
 export const SearchResultsProvider = ({ children }) => {
   const history = useHistory();
   const [searchResults, setSearchResults] = useStateAndLS('searchResults', INITIAL_STATE);
+  const [fwd, setFwd] = useState(false);
 
-  // update state before forwarding to results page, then reset flag
+  const isInitial = useIsInitial();
   useEffect(() => {
-    if (searchResults.fwd) {
+    if (isInitial) return;
+    else setFwd(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchResults]);
+
+  useEffect(() => {
+    if (fwd) {
       history.push(PATHS.RESULTS);
-      setSearchResults((prev) => ({ ...prev, fwd: false }));
+      setFwd(false);
     }
-  }, [history, searchResults.fwd, setSearchResults]);
+  }, [fwd, history, searchResults]);
 
   return (
     <SetSearchResults.Provider value={setSearchResults}>

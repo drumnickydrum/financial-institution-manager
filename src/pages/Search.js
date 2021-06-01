@@ -1,12 +1,10 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
 import { useState, useContext, useEffect } from 'react';
-import { Context } from 'store/Context';
 import { searchByZip, searchByZipMultiple } from 'store/actions/searchByZip';
 import { ResultsPending } from './ResultsPending';
 import { SetSearchResults } from 'store/SearchResults';
 
 export const Search = () => {
-  const { favorites } = useContext(Context);
   const setSearchResults = useContext(SetSearchResults);
   const [nearbyZips, setNearbyZips] = useState([]);
 
@@ -42,8 +40,7 @@ export const Search = () => {
       setSearchResults({
         zipSearched: zipInput,
         nearbyZips: data.results.zip,
-        fdicResults: data.results.fdic,
-        fwd: true,
+        fiList: data.results.fdic,
       });
     }
   };
@@ -53,13 +50,13 @@ export const Search = () => {
     const data = await searchByZipMultiple(nearbyZips.splice(0, 5));
     if (data.error?.match(/rejected/)) setError(searchFormText.errors.network);
     if (data.error?.match(/results/)) setNoResults(nearbyZips.join());
-    else
+    else {
       setSearchResults({
         zipSearched: zipInput,
         nearbyZips: [],
-        fdicResults: data.results,
-        fwd: true,
+        fiList: data.results,
       });
+    }
   };
 
   return loading ? (
@@ -97,14 +94,14 @@ export const Search = () => {
         <Button variant='contained' color='primary' type='submit'>
           {searchFormText.submitBtn}
         </Button>
-        {favorites.length > 0 && (
+        {/* {favorites.length > 0 && (
           <>
             <Typography variant='h4'>or</Typography>
             <Button variant='contained' color='primary'>
               {searchFormText.favoritesBtn}
             </Button>
           </>
-        )}
+        )} */}
       </form>
     </Container>
   );

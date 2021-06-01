@@ -16,16 +16,16 @@ export const FDIC_NO_RESULTS_RESPONSE = { data: [], totals: { count: 0 } };
 export const FDIC_NO_RESULTS_RETURN = [];
 export const FDIC_RESULTS_RESPONSE = {
   data: [
-    { data: { ZIP: '90210', NAME: 'BANK1' } },
-    { data: { ZIP: '90210', NAME: 'BANK2' } },
-    { data: { ZIP: '90210', NAME: 'BANK3' } },
+    { data: { ZIP: '90210', NAME: 'BANK1', ID: '1' } },
+    { data: { ZIP: '90210', NAME: 'BANK2', ID: '2' } },
+    { data: { ZIP: '90210', NAME: 'BANK3', ID: '3' } },
   ],
   totals: { count: 3 },
 };
 export const FDIC_RESULTS_RETURN = [
-  { ZIP: '90210', NAME: 'BANK1' },
-  { ZIP: '90210', NAME: 'BANK2' },
-  { ZIP: '90210', NAME: 'BANK3' },
+  { ZIP: '90210', NAME: 'BANK1', ID: '1' },
+  { ZIP: '90210', NAME: 'BANK2', ID: '2' },
+  { ZIP: '90210', NAME: 'BANK3', ID: '3' },
 ];
 export const FDIC_NEARBY_RESPONSE = {
   data: [
@@ -39,6 +39,25 @@ export const FDIC_NEARBY_RETURN = [
   { ZIP: '90209', NAME: 'BANK4' },
   { ZIP: '90209', NAME: 'BANK5' },
   { ZIP: '90209', NAME: 'BANK6' },
+];
+
+export const FAVORITES = ['1', '2'];
+export const NOTES = [
+  {
+    ID: '1',
+    notes:
+      'NOTE 1 Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum inventore reprehenderit fugiat! ',
+  },
+  {
+    ID: '2',
+    notes:
+      'NOTE 2 Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum inventore reprehenderit fugiat! Sint veniam repudiandae eaque officiis eum dicta commodi reprehenderit quo fugiat.',
+  },
+  {
+    ID: '3',
+    notes:
+      'NOTE 3 Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum inventore reprehenderit fugiat! Sint veniam repudiandae eaque officiis eum dicta commodi reprehenderit quo fugiat. Corrupti iusto, quasi fugiat incidunt officia quidem.',
+  },
 ];
 
 // Ex: ZIP code api responds with no results

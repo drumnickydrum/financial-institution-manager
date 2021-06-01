@@ -4,11 +4,13 @@ import { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { searchByZipMultiple } from 'store/actions/searchByZip';
 import { SearchResults, SetSearchResults } from 'store/SearchResults';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
 export const Results = () => {
   const history = useHistory();
 
-  const { zipSearched, nearbyZips, fdicResults } = useContext(SearchResults);
+  const { zipSearched, nearbyZips, fiList } = useContext(SearchResults);
   const setSearchResults = useContext(SetSearchResults);
 
   const [showNearby, setShowNearby] = useState(false);
@@ -28,9 +30,9 @@ export const Results = () => {
       if (data.error.includes('rejected')) setError(resultsText.errors.rejected);
     } else {
       setSearchResults((prev) => {
-        const newResults = [...prev.fdicResults];
+        const newResults = [...prev.fiList];
         newResults.push(...data.results);
-        return { ...prev, nearbyZips: [], fdicResults: newResults };
+        return { ...prev, nearbyZips: [], fiList: newResults };
       });
     }
     setLoading(false);
@@ -44,24 +46,7 @@ export const Results = () => {
       <Typography variant='h6' component='h2' style={{ textAlign: 'center' }}>
         Financial Institutions Near {zipSearched}
       </Typography>
-      {fdicResults?.map((result, i) => (
-        <Card
-          key={result.ID || `result-${i}`}
-          variant='outlined'
-          raised
-          style={{ display: 'flex' }}
-        >
-          <Container>
-            <Typography variant='body1'>{result.NAME}</Typography>
-            <Typography variant='body2'>{result.ADDRESS}</Typography>
-            <Typography variant='body2'>
-              {result.CITY},&nbsp;{result.STALP}&nbsp;
-              {result.ZIP}
-            </Typography>
-          </Container>
-          <Button>FAV</Button>
-        </Card>
-      ))}
+      {fiList && Object.values(fiList).map((item) => <FiItem key={item.ID} item={item} />)}
       {!showNearby && nearbyZips?.length > 0 && (
         <Button variant='contained' color='primary' onClick={searchNearby}>
           {resultsText.nearbyBtn}
@@ -71,6 +56,26 @@ export const Results = () => {
       {loading && <div>Loading...</div>}
       {error && <div>{error}</div>}
     </Container>
+  );
+};
+
+const FiItem = ({ item }) => {
+  return (
+    <Card
+      variant='outlined'
+      raised
+      style={{ display: 'flex', margin: '10px', padding: '10px' }}
+    >
+      <Container>
+        <Typography variant='body1'>{item.NAME}</Typography>
+        <Typography variant='body2'>{item.ADDRESS}</Typography>
+        <Typography variant='body2'>
+          {item.CITY},&nbsp;{item.STALP}&nbsp;
+          {item.ZIP}
+        </Typography>
+      </Container>
+      <Button>{item.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}</Button>
+    </Card>
   );
 };
 

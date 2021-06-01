@@ -1,6 +1,6 @@
 import { wait } from './wait';
 
-export const RETRY_DELAY = 0;
+export const RETRY_DELAY = 500;
 
 export const retry = (func, delay, max) =>
   new Promise((res, rej) => {
