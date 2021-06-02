@@ -42,22 +42,18 @@ export const searchByZipMultiple = async (zips) => {
     for (let zip of zips) promises.push(fetchFDIC(zip));
     const results = await Promise.allSettled(promises);
     let rejected = 0;
-    let noResults = 0;
     for (let result of results) {
       const error = result.value.error;
       if (error) rejected++;
       else {
-        if (result.value.data.length === 0) noResults++;
         payload.results.push(...result.value.data);
       }
     }
     if (payload.results.length > 0)
       payload.results = payload.results.map((result) => result.data);
     if (rejected === NUM_ZIPS) throw new Error('fdic rejected');
-    if (noResults === NUM_ZIPS) throw new Error('no results');
   } catch (e) {
     if (e.message.match(/rejected/)) payload.error = 'rejected';
-    if (e.message.match(/results/)) payload.error = 'no results';
   } finally {
     return payload;
   }

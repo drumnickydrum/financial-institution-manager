@@ -2,81 +2,102 @@ import { Button, Card, Container, Typography } from '@material-ui/core';
 import { PATHS } from 'App';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
-import { searchByZipMultiple } from 'store/actions/searchByZip';
-import { SearchResults, SetSearchResults } from 'store/SearchResults';
+import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import { useMemo } from 'react';
 
 export const Results = () => {
   const history = useHistory();
 
-  const { zipSearched, nearbyZips, fiList } = useContext(SearchResults);
-  const setSearchResults = useContext(SetSearchResults);
+  const { loading, error } = useContext(SearchState);
+  const { searchNearbyAndAddToResults } = useContext(SearchActions);
+  const results = useContext(SearchResults);
 
-  const [showNearby, setShowNearby] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [showingNearbyResults, setShowingNearbyResults] = useState(false);
+
+  const showNearbyBtn = !showingNearbyResults && results?.nearbyZips?.length > 0;
+  const errorMessage = getErrorMessage(error);
 
   const goBack = () => {
     history.push(PATHS.SEARCH);
   };
 
-  const searchNearby = async () => {
-    setShowNearby(true);
-    setLoading(true);
-    const data = await searchByZipMultiple(nearbyZips.splice(0, 5));
-    if (data.error) {
-      if (data.error.includes('results')) setError(resultsText.errors.noResultsNearby);
-      if (data.error.includes('rejected')) setError(resultsText.errors.rejected);
-    } else {
-      setSearchResults((prev) => {
-        const newResults = [...prev.fiList];
-        newResults.push(...data.results);
-        return { ...prev, nearbyZips: [], fiList: newResults };
-      });
-    }
-    setLoading(false);
+  const onNearbyClick = () => {
+    setShowingNearbyResults(true);
+    searchNearbyAndAddToResults();
   };
 
   return (
-    <Container maxWidth='sm'>
-      <Button variant='contained' color='primary' onClick={goBack}>
-        {resultsText.goBackBtn}
-      </Button>
-      <Typography variant='h6' component='h2' style={{ textAlign: 'center' }}>
-        Financial Institutions Near {zipSearched}
-      </Typography>
-      {fiList && Object.values(fiList).map((item) => <FiItem key={item.ID} item={item} />)}
-      {!showNearby && nearbyZips?.length > 0 && (
-        <Button variant='contained' color='primary' onClick={searchNearby}>
-          {resultsText.nearbyBtn}
-          {zipSearched}
-        </Button>
-      )}
-      {loading && <div>Loading...</div>}
-      {error && <div>{error}</div>}
-    </Container>
+    <ResultsJSX
+      goBack={goBack}
+      zipSearched={results?.zipSearched || ''}
+      fiList={results?.fiList || []}
+      showNearbyBtn={showNearbyBtn}
+      onNearbyClick={onNearbyClick}
+      loading={loading}
+      errorMessage={errorMessage}
+    />
   );
 };
 
-const FiItem = ({ item }) => {
-  return (
-    <Card
-      variant='outlined'
-      raised
-      style={{ display: 'flex', margin: '10px', padding: '10px' }}
-    >
-      <Container>
-        <Typography variant='body1'>{item.NAME}</Typography>
-        <Typography variant='body2'>{item.ADDRESS}</Typography>
-        <Typography variant='body2'>
-          {item.CITY},&nbsp;{item.STALP}&nbsp;
-          {item.ZIP}
+const ResultsJSX = ({
+  goBack,
+  zipSearched,
+  fiList,
+  showNearbyBtn,
+  onNearbyClick,
+  loading,
+  errorMessage,
+}) => {
+  const memo = useMemo(() => {
+    return (
+      <Container maxWidth='sm'>
+        <Button variant='contained' color='primary' onClick={goBack}>
+          {resultsText.goBackBtn}
+        </Button>
+        <Typography variant='h6' component='h2' style={{ textAlign: 'center' }}>
+          Financial Institutions Near {zipSearched}
         </Typography>
+        {fiList &&
+          fiList.map((item, i) => <FiItem key={item.ID || `FiItem${i}`} item={item} />)}
+        {showNearbyBtn && (
+          <Button variant='contained' color='primary' onClick={onNearbyClick}>
+            {resultsText.nearbyBtn}
+            {zipSearched}
+          </Button>
+        )}
+        {loading && <div>Loading...</div>}
+        {errorMessage && <div>{errorMessage}</div>}
       </Container>
-      <Button>{item.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}</Button>
-    </Card>
-  );
+    );
+  }, [showNearbyBtn, errorMessage, fiList, goBack, loading, onNearbyClick, zipSearched]);
+  return memo;
+};
+
+const FiItem = ({ item }) => {
+  const favorites = {};
+  if (item.ID in favorites) item.favorite = true;
+  const memo = useMemo(() => {
+    return (
+      <Card
+        variant='outlined'
+        raised
+        style={{ display: 'flex', margin: '10px', padding: '10px' }}
+      >
+        <Container>
+          <Typography variant='body1'>{item.NAME}</Typography>
+          <Typography variant='body2'>{item.ADDRESS}</Typography>
+          <Typography variant='body2'>
+            {item.CITY},&nbsp;{item.STALP}&nbsp;
+            {item.ZIP}
+          </Typography>
+        </Container>
+        <Button>{item.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}</Button>
+      </Card>
+    );
+  }, [item.ADDRESS, item.CITY, item.NAME, item.STALP, item.ZIP, item.favorite]);
+  return memo;
 };
 
 export const resultsText = {
@@ -84,6 +105,12 @@ export const resultsText = {
   nearbyBtn: 'More Locations Near ',
   errors: {
     noResultsNearby: 'No results in nearby ZIP codes',
-    rejected: 'Error loading additional search results',
+    network: 'Error loading additional search results',
   },
+};
+
+const getErrorMessage = (error) => {
+  if (!error) return '';
+  if (error.includes('results')) return resultsText.errors.noResultsNearby;
+  else return resultsText.errors.network;
 };

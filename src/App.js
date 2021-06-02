@@ -1,8 +1,9 @@
 import { BrowserRouter, Redirect, Route } from 'react-router-dom';
-import { ContextProvider } from 'store/Context';
+import { UserProvider } from 'store/User';
 import { Search } from 'pages/Search';
-import { SearchResultsProvider } from 'store/SearchResults';
+import { SearchProvider } from 'store/SearchProvider';
 import { Results } from 'pages/Results';
+import { Test } from 'pages/Test';
 import { CssBaseline } from '@material-ui/core';
 
 export const PATHS = {
@@ -17,16 +18,17 @@ PATHS.START = PATHS.SEARCH;
 function App() {
   return (
     <BrowserRouter basename='/'>
-      <ContextProvider>
-        <SearchResultsProvider>
+      <UserProvider>
+        <SearchProvider>
           <CssBaseline />
           <Route path={PATHS.BASE} exact render={() => <Redirect to={PATHS.START} />} />
           <Route path={PATHS.SEARCH} component={Search} />
           <Route path={PATHS.RESULTS} component={Results} />
           <Route path={PATHS.FAVORITES} component={Favorites} />
           <Route path={`${PATHS.INSTITUTION}:id`} component={Institution} />
-        </SearchResultsProvider>
-      </ContextProvider>
+          <Route path='/test' component={Test} />
+        </SearchProvider>
+      </UserProvider>
     </BrowserRouter>
   );
 }

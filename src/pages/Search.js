@@ -1,75 +1,71 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
-import { useState, useContext, useEffect } from 'react';
-import { searchByZip, searchByZipMultiple } from 'store/actions/searchByZip';
+import { useState, useContext } from 'react';
 import { ResultsPending } from './ResultsPending';
-import { SetSearchResults } from 'store/SearchResults';
+import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
 
 export const Search = () => {
-  const setSearchResults = useContext(SetSearchResults);
-  const [nearbyZips, setNearbyZips] = useState([]);
+  const { search, searchNearby } = useContext(SearchActions);
+  const { loading, error } = useContext(SearchState);
+  const results = useContext(SearchResults);
 
+  const [alreadySearched, setAlreadySearched] = useState(false);
   const [zipInput, setZipInput] = useState('');
-  const [noResults, setNoResults] = useState(null);
-  const [error, setError] = useState('');
+  const [userError, setUserError] = useState('');
 
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    if (!loading) return;
-    if (error || noResults) setLoading(false);
-  }, [error, noResults, loading]);
+  const canSearchNearby = results?.nearbyZips?.length > 0;
+  const noResults = alreadySearched && results?.fiList?.length === 0;
+  const errorMessage = userError || getErrorMessage(error, zipInput);
 
   const zipChange = ({ target: { value } }) => {
     if (!value) return setZipInput('');
     if (value.length > 5) return;
     if (value.match(/\D/gi)) return;
     setZipInput(value);
-    if (error) setError('');
+    if (userError) setUserError('');
   };
 
-  const search = async (e) => {
+  const onSearchSubmit = (e) => {
     e.preventDefault();
-    if (!zipInput || zipInput.length < 5) return setError(searchFormText.errors.length);
-    setLoading(true);
-    const data = await searchByZip(zipInput);
-    if (data.errors.zip) setError(`${zipInput}${searchFormText.errors.invalid}`);
-    else if (data.errors.fdic) setError(searchFormText.errors.network);
-    else if (data.results.fdic.length === 0) {
-      setNoResults(zipInput);
-      setNearbyZips(data.results.zip);
-    } else {
-      setSearchResults({
-        zipSearched: zipInput,
-        nearbyZips: data.results.zip,
-        fiList: data.results.fdic,
-      });
-    }
-  };
-
-  const searchNearby = async (e) => {
-    setLoading(true);
-    const data = await searchByZipMultiple(nearbyZips.splice(0, 5));
-    if (data.error?.match(/rejected/)) setError(searchFormText.errors.network);
-    if (data.error?.match(/results/)) setNoResults(nearbyZips.join());
-    else {
-      setSearchResults({
-        zipSearched: zipInput,
-        nearbyZips: [],
-        fiList: data.results,
-      });
-    }
+    if (!zipInput || zipInput.length < 5) return setUserError(searchFormText.errors.length);
+    setAlreadySearched(true);
+    search(zipInput);
   };
 
   return loading ? (
     <ResultsPending />
   ) : (
+    <SearchJSX
+      noResults={noResults}
+      canSearchNearby={canSearchNearby}
+      searchNearby={searchNearby}
+      onSearchSubmit={onSearchSubmit}
+      errorMessage={errorMessage}
+      zipInput={zipInput}
+      zipChange={zipChange}
+      zipSearched={results?.zipSearched || ''}
+    />
+  );
+};
+
+const SearchJSX = ({
+  noResults,
+  canSearchNearby,
+  searchNearby,
+  onSearchSubmit,
+  errorMessage,
+  zipInput,
+  zipChange,
+  zipSearched,
+}) => {
+  return (
     <Container maxWidth='sm'>
       {noResults && (
         <>
           <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>
             {searchFormText.noResults}
-            {noResults}
+            {zipSearched}
           </Typography>
-          {nearbyZips?.length > 0 && (
+          {canSearchNearby && (
             <>
               <Button variant='contained' color='primary' onClick={searchNearby}>
                 {searchFormText.nearbyBtn}
@@ -82,11 +78,11 @@ export const Search = () => {
       <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>
         {noResults ? searchFormText.instructionNoResults : searchFormText.instruction}
       </Typography>
-      <form onSubmit={search} style={{ display: 'flex', flexDirection: 'column' }}>
+      <form onSubmit={onSearchSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
         <TextField
           placeholder={searchFormText.placeholder}
-          error={Boolean(error)}
-          helperText={error}
+          error={Boolean(errorMessage)}
+          helperText={errorMessage}
           value={zipInput}
           onChange={zipChange}
           inputProps={{ type: 'tel' }}
@@ -120,4 +116,11 @@ export const searchFormText = {
     invalid: ' is an invalid U.S. zip code',
     network: 'Network error, please try again',
   },
+};
+
+const getErrorMessage = (error, zipInput) => {
+  if (!error) return '';
+  if (error.includes('rejected')) return searchFormText.errors.network;
+  if (error.includes('invalid')) return `${zipInput}${searchFormText.errors.invalid}`;
+  return 'There was an error.  Please try again.';
 };

@@ -14,14 +14,13 @@ import { resultsPendingText } from './ResultsPending';
 import { FDIC_API_MOCK, ZIP_API_MOCK } from 'test/setupTests';
 
 describe('Search Page', () => {
-  let zipInput, submitBtn, debug;
-  beforeEach(() => {
+  let zipInput, submitBtn;
+  beforeEach(async () => {
     ZIP_API_MOCK();
     FDIC_API_MOCK();
-    const app = render(<App />);
-    debug = app.debug;
+    render(<App />);
 
-    zipInput = screen.getByPlaceholderText(searchFormText.placeholder);
+    zipInput = await screen.findByPlaceholderText(searchFormText.placeholder);
     submitBtn = screen.getByText(searchFormText.submitBtn).closest('button');
   });
 

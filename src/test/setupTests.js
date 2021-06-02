@@ -20,7 +20,6 @@ import {
   ZIP_NO_NEARBY_RESPONSE,
   ZIP_NEARBY_RESPONSE,
 } from './responses';
-import * as storage from 'utils/storage';
 
 nock.disableNetConnect(); // throw error if req on un-mocked url
 

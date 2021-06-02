@@ -10,18 +10,16 @@ import { resultsText } from './Results';
 import { FDIC_NEARBY_RETURN, FDIC_RESULTS_RETURN } from 'test/responses';
 
 describe('Results Page', () => {
-  let goBackBtn, nearbyBtn, debug;
+  let goBackBtn, nearbyBtn;
   beforeEach(async () => {
     ZIP_API_MOCK();
     FDIC_API_MOCK();
-    const app = render(<App />);
-    debug = app.debug;
+    render(<App />);
 
-    const zipInput = screen.getByPlaceholderText(searchFormText.placeholder);
+    const zipInput = await screen.findByPlaceholderText(searchFormText.placeholder);
     const submitBtn = screen.getByText(searchFormText.submitBtn).closest('button');
     input(zipInput, VALID_ZIP_WITH_RESULTS);
     userEvent.click(submitBtn);
-
     const goBackBtnText = await screen.findByText((content) =>
       content.includes(resultsText.goBackBtn)
     );
@@ -34,6 +32,10 @@ describe('Results Page', () => {
 
   afterEach(() => {
     userEvent.click(goBackBtn);
+  });
+
+  it('true', () => {
+    expect(true).toBeTruthy();
   });
 
   it('Displays results', () => {

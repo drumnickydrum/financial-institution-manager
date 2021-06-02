@@ -90,9 +90,9 @@ describe('searchByZipMultiple()', () => {
     expect(data.results).toEqual([]);
   });
 
-  it('returns an error if no results from all', async () => {
+  it('returns an empty array if no results from all', async () => {
     const data = await searchByZipMultiple(ALL_ZIPS_NO_RESULTS);
-    expect(data.error).toBeTruthy();
+    expect(data.error).toBeFalsy();
     expect(data.results).toEqual([]);
   });
 
