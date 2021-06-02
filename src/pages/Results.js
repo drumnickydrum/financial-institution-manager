@@ -1,11 +1,11 @@
-import { Button, Card, Container, Typography } from '@material-ui/core';
+import { Button, Card, Container, IconButton, Typography } from '@material-ui/core';
 import { PATHS } from 'App';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import { useMemo } from 'react';
+import { UserInput, UserInputActions } from 'store/UserProvider';
 
 export const Results = () => {
   const history = useHistory();
@@ -50,54 +50,66 @@ const ResultsJSX = ({
   loading,
   errorMessage,
 }) => {
-  const memo = useMemo(() => {
-    return (
-      <Container maxWidth='sm'>
-        <Button variant='contained' color='primary' onClick={goBack}>
-          {resultsText.goBackBtn}
+  return (
+    <Container maxWidth='sm'>
+      <Button variant='contained' color='primary' onClick={goBack}>
+        {resultsText.goBackBtn}
+      </Button>
+      <Typography variant='h6' component='h2' style={{ textAlign: 'center' }}>
+        Financial Institutions Near {zipSearched}
+      </Typography>
+      {fiList &&
+        fiList.map((item, i) => <FiItem key={item.ID || `FiItem${i}`} item={item} />)}
+      {showNearbyBtn && (
+        <Button variant='contained' color='primary' onClick={onNearbyClick}>
+          {resultsText.nearbyBtn}
+          {zipSearched}
         </Button>
-        <Typography variant='h6' component='h2' style={{ textAlign: 'center' }}>
-          Financial Institutions Near {zipSearched}
-        </Typography>
-        {fiList &&
-          fiList.map((item, i) => <FiItem key={item.ID || `FiItem${i}`} item={item} />)}
-        {showNearbyBtn && (
-          <Button variant='contained' color='primary' onClick={onNearbyClick}>
-            {resultsText.nearbyBtn}
-            {zipSearched}
-          </Button>
-        )}
-        {loading && <div>Loading...</div>}
-        {errorMessage && <div>{errorMessage}</div>}
-      </Container>
-    );
-  }, [showNearbyBtn, errorMessage, fiList, goBack, loading, onNearbyClick, zipSearched]);
-  return memo;
+      )}
+      {loading && <div>Loading...</div>}
+      {errorMessage && <div>{errorMessage}</div>}
+    </Container>
+  );
 };
 
 const FiItem = ({ item }) => {
-  const favorites = {};
-  if (item.ID in favorites) item.favorite = true;
-  const memo = useMemo(() => {
-    return (
-      <Card
-        variant='outlined'
-        raised
-        style={{ display: 'flex', margin: '10px', padding: '10px' }}
+  const { favorites } = useContext(UserInput);
+  const { addToFavorites, removeFromFavorites } = useContext(UserInputActions);
+
+  const isFavorite = favorites?.includes(item.ID);
+
+  const toggleFavorite = (e) => {
+    e.stopPropagation();
+    if (isFavorite) removeFromFavorites(item.ID);
+    else addToFavorites(item.ID);
+  };
+
+  return (
+    <Card
+      variant='outlined'
+      raised
+      style={{ display: 'flex', margin: '10px', padding: '10px' }}
+    >
+      <Container>
+        <Typography variant='body1'>{item.NAME}</Typography>
+        <Typography variant='body2'>{item.ADDRESS}</Typography>
+        <Typography variant='body2'>
+          {item.CITY},&nbsp;{item.STALP}&nbsp;
+          {item.ZIP}
+        </Typography>
+      </Container>
+      <IconButton
+        aria-label={resultsText.toggleFavorite(item.NAME, isFavorite)}
+        onClick={toggleFavorite}
       >
-        <Container>
-          <Typography variant='body1'>{item.NAME}</Typography>
-          <Typography variant='body2'>{item.ADDRESS}</Typography>
-          <Typography variant='body2'>
-            {item.CITY},&nbsp;{item.STALP}&nbsp;
-            {item.ZIP}
-          </Typography>
-        </Container>
-        <Button>{item.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}</Button>
-      </Card>
-    );
-  }, [item.ADDRESS, item.CITY, item.NAME, item.STALP, item.ZIP, item.favorite]);
-  return memo;
+        {isFavorite ? (
+          <FavoriteIcon aria-label={resultsText.favoriteLabel(item.NAME)} />
+        ) : (
+          <FavoriteBorderIcon aria-label={resultsText.notFavoriteLabel(item.NAME)} />
+        )}
+      </IconButton>
+    </Card>
+  );
 };
 
 export const resultsText = {
@@ -107,6 +119,12 @@ export const resultsText = {
     noResultsNearby: 'No results in nearby ZIP codes',
     network: 'Error loading additional search results',
   },
+  toggleFavorite: (name, isFavorite) => {
+    if (isFavorite) return `Remove ${name} from favorites`;
+    else return `Add ${name} to favorites`;
+  },
+  favoriteLabel: (name) => `${name} is a favorite`,
+  notFavoriteLabel: (name) => `${name} is not a favorite`,
 };
 
 const getErrorMessage = (error) => {

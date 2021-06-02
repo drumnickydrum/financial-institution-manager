@@ -10,7 +10,7 @@ import { resultsText } from './Results';
 import { FDIC_NEARBY_RETURN, FDIC_RESULTS_RETURN } from 'test/responses';
 
 describe('Results Page', () => {
-  let goBackBtn, nearbyBtn;
+  let goBackBtn;
   beforeEach(async () => {
     ZIP_API_MOCK();
     FDIC_API_MOCK();
@@ -24,10 +24,6 @@ describe('Results Page', () => {
       content.includes(resultsText.goBackBtn)
     );
     goBackBtn = goBackBtnText.closest('button');
-    const nearbyBtnText = await screen.findByText((content) =>
-      content.includes(resultsText.nearbyBtn)
-    );
-    nearbyBtn = nearbyBtnText.closest('button');
   });
 
   afterEach(() => {
@@ -45,9 +41,32 @@ describe('Results Page', () => {
   });
 
   it('Displays more results on nearby btn click', async () => {
+    const nearbyBtnText = await screen.findByText((content) =>
+      content.includes(resultsText.nearbyBtn)
+    );
+    const nearbyBtn = nearbyBtnText.closest('button');
     userEvent.click(nearbyBtn);
     await screen.findAllByText(FDIC_NEARBY_RETURN[0].NAME);
     screen.getAllByText(FDIC_NEARBY_RETURN[1].NAME);
     screen.getAllByText(FDIC_NEARBY_RETURN[2].NAME);
+  });
+
+  it('Toggles favorites', async () => {
+    const name = FDIC_RESULTS_RETURN[0].NAME;
+    const item = screen.getByText(name);
+    const favBtn = screen.getByLabelText(resultsText.toggleFavorite(name, false));
+    const favIconLabel = resultsText.favoriteLabel(name);
+    const notFavIconLabel = resultsText.notFavoriteLabel(name);
+
+    expect(screen.queryByLabelText(favIconLabel)).toBeNull();
+    screen.getByLabelText(notFavIconLabel);
+
+    userEvent.click(item);
+    expect(screen.queryByLabelText(favIconLabel)).toBeNull();
+    screen.getByLabelText(notFavIconLabel);
+
+    userEvent.click(favBtn);
+    screen.getByLabelText(favIconLabel);
+    expect(screen.queryByLabelText(notFavIconLabel)).toBeNull();
   });
 });

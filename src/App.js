@@ -1,5 +1,5 @@
 import { BrowserRouter, Redirect, Route } from 'react-router-dom';
-import { UserProvider } from 'store/User';
+import { UserProvider } from 'store/UserProvider';
 import { Search } from 'pages/Search';
 import { SearchProvider } from 'store/SearchProvider';
 import { Results } from 'pages/Results';
