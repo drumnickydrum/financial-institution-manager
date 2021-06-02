@@ -10,7 +10,7 @@ import {
   FDIC_REJECTS,
   NEARBY_ZIP1,
   NEARBY_ZIP2,
-} from './inputs';
+} from './test/inputs';
 import {
   FDIC_RESULTS_RESPONSE,
   FDIC_NO_RESULTS_RESPONSE,
@@ -19,7 +19,7 @@ import {
   ZIP_INVALID_RESPONSE,
   ZIP_NO_NEARBY_RESPONSE,
   ZIP_NEARBY_RESPONSE,
-} from './responses';
+} from './test/responses';
 
 nock.disableNetConnect(); // throw error if req on un-mocked url
 

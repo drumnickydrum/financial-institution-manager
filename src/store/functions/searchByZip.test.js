@@ -15,7 +15,7 @@ import {
   FDIC_NO_RESULTS_RETURN,
   ZIP_VALID_RETURN,
 } from 'test/responses';
-import { FDIC_API_MOCK, ZIP_API_MOCK } from 'test/setupTests';
+import { FDIC_API_MOCK, ZIP_API_MOCK } from 'setupTests';
 import { searchByZip, searchByZipMultiple } from './searchByZip';
 
 describe('searchByZip()', () => {

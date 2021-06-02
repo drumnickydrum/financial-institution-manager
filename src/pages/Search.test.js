@@ -11,7 +11,7 @@ import {
 } from 'test/inputs';
 import { searchFormText } from 'pages/Search';
 import { resultsPendingText } from './ResultsPending';
-import { FDIC_API_MOCK, ZIP_API_MOCK } from 'test/setupTests';
+import { FDIC_API_MOCK, ZIP_API_MOCK } from 'setupTests';
 
 describe('Search Page', () => {
   let zipInput, submitBtn;
