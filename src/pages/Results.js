@@ -76,12 +76,12 @@ const FiItem = ({ item }) => {
   const { favorites } = useContext(UserInput);
   const { addToFavorites, removeFromFavorites } = useContext(UserInputActions);
 
-  const isFavorite = favorites?.includes(item.ID);
+  const isFavorite = favorites ? item.ID in favorites : false;
 
   const toggleFavorite = (e) => {
     e.stopPropagation();
     if (isFavorite) removeFromFavorites(item.ID);
-    else addToFavorites(item.ID);
+    else addToFavorites(item);
   };
 
   return (

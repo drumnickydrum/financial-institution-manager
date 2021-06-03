@@ -1,33 +1,31 @@
 import { useStateAndCache } from 'hooks/useStateAndCache';
 import { createContext } from 'react';
 
-const INITIAL_STATE = {
-  favorites: [],
-  notes: {},
-};
+const Favorites = Object.prototype.constructor;
+const Notes = Object.prototype.constructor;
 
 export const UserInputActions = createContext();
 export const UserInput = createContext();
 export const UserProvider = ({ children }) => {
-  const [favorites, setFavorites] = useStateAndCache('favorites', INITIAL_STATE.favorites);
-  const [notes, setNotes] = useStateAndCache('notes', INITIAL_STATE.notes);
+  const [favorites, setFavorites] = useStateAndCache('favorites', new Favorites());
+  const [notes, setNotes] = useStateAndCache('notes', new Notes());
 
-  const addToFavorites = (ID) => {
+  const addToFavorites = (item) => {
     setFavorites((prev) => {
-      const newFavs = [...prev, ID];
+      const newFavs = { ...prev, [item.ID]: item };
       return newFavs;
     });
   };
 
   const removeFromFavorites = (ID) => {
     setFavorites((prev) => {
-      const newFavs = [...prev];
-      newFavs.splice(newFavs.indexOf(ID), 1);
+      const newFavs = { ...prev };
+      delete newFavs[ID];
       return newFavs;
     });
   };
 
-  const clearAllFavorites = () => setFavorites(INITIAL_STATE.favorites);
+  const clearAllFavorites = () => setFavorites(new Favorites());
 
   return (
     <UserInputActions.Provider
