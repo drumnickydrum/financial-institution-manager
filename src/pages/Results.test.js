@@ -8,6 +8,7 @@ import { input } from 'pages/Search.test';
 import { VALID_ZIP_WITH_RESULTS } from 'test/inputs';
 import { resultsText } from './Results';
 import { FDIC_NEARBY_RETURN, FDIC_RESULTS_RETURN } from 'test/responses';
+import { favoriteButtonText } from 'components/FavoriteButton';
 
 describe('Results Page', () => {
   let goBackBtn;
@@ -53,10 +54,9 @@ describe('Results Page', () => {
 
   it('Toggles favorites', async () => {
     const name = FDIC_RESULTS_RETURN[0].NAME;
-    const item = screen.getByText(name);
-    const favBtn = screen.getByLabelText(resultsText.toggleFavorite(name, false));
-    const favIconLabel = resultsText.favoriteLabel(name);
-    const notFavIconLabel = resultsText.notFavoriteLabel(name);
+    const favBtn = screen.getByLabelText(favoriteButtonText.toggleFavorite(name, false));
+    const favIconLabel = favoriteButtonText.favoriteLabel(name);
+    const notFavIconLabel = favoriteButtonText.notFavoriteLabel(name);
 
     expect(screen.queryByLabelText(favIconLabel)).toBeNull();
     screen.getByLabelText(notFavIconLabel);

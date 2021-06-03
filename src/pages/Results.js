@@ -1,22 +1,20 @@
-import { Button, Card, Container, IconButton, Typography } from '@material-ui/core';
+import { Button, Card, Container, Typography } from '@material-ui/core';
 import { PATHS } from 'App';
+import { FavoriteButton } from 'components/FavoriteButton';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import { UserInput, UserInputActions } from 'store/UserProvider';
 
 export const Results = () => {
   const history = useHistory();
 
   const { loading, error } = useContext(SearchState);
   const { searchNearbyAndAddToResults } = useContext(SearchActions);
-  const results = useContext(SearchResults);
+  const { zipSearched, nearbyZips, fiList } = useContext(SearchResults);
 
   const [showingNearbyResults, setShowingNearbyResults] = useState(false);
 
-  const showNearbyBtn = !showingNearbyResults && results?.nearbyZips?.length > 0;
+  const showNearbyBtn = !showingNearbyResults && nearbyZips.length > 0;
   const errorMessage = getErrorMessage(error);
 
   const goBack = () => {
@@ -31,8 +29,8 @@ export const Results = () => {
   return (
     <ResultsJSX
       goBack={goBack}
-      zipSearched={results?.zipSearched || ''}
-      fiList={results?.fiList || []}
+      zipSearched={zipSearched}
+      fiList={fiList}
       showNearbyBtn={showNearbyBtn}
       onNearbyClick={onNearbyClick}
       loading={loading}
@@ -74,16 +72,6 @@ const ResultsJSX = ({
 
 const FiItem = ({ item }) => {
   const history = useHistory();
-  const { favorites } = useContext(UserInput);
-  const { addToFavorites, removeFromFavorites } = useContext(UserInputActions);
-
-  const isFavorite = favorites ? item.ID in favorites : false;
-
-  const toggleFavorite = (e) => {
-    e.stopPropagation();
-    if (isFavorite) removeFromFavorites(item.ID);
-    else addToFavorites(item);
-  };
 
   const onContainerClick = () => {
     history.push(`${PATHS.INSTITUTION}${item.ID}`);
@@ -103,16 +91,7 @@ const FiItem = ({ item }) => {
           {item.ZIP}
         </Typography>
       </Container>
-      <IconButton
-        aria-label={resultsText.toggleFavorite(item.NAME, isFavorite)}
-        onClick={toggleFavorite}
-      >
-        {isFavorite ? (
-          <FavoriteIcon aria-label={resultsText.favoriteLabel(item.NAME)} />
-        ) : (
-          <FavoriteBorderIcon aria-label={resultsText.notFavoriteLabel(item.NAME)} />
-        )}
-      </IconButton>
+      <FavoriteButton item={item} />
     </Card>
   );
 };
@@ -124,12 +103,6 @@ export const resultsText = {
     noResultsNearby: 'No results in nearby ZIP codes',
     network: 'Error loading additional search results',
   },
-  toggleFavorite: (name, isFavorite) => {
-    if (isFavorite) return `Remove ${name} from favorites`;
-    else return `Add ${name} to favorites`;
-  },
-  favoriteLabel: (name) => `${name} is a favorite`,
-  notFavoriteLabel: (name) => `${name} is not a favorite`,
 };
 
 const getErrorMessage = (error) => {

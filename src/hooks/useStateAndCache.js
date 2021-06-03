@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCachedState, setCachedState } from 'utils/storage';
 
-/**
- *  Since initial state is set asynchronously,
- *  check for `null` in component if you want to prevent flash
- */
 export const useStateAndCache = (key, initialState) => {
   const [value, setValue] = useState(null);
 
@@ -19,5 +15,5 @@ export const useStateAndCache = (key, initialState) => {
   useEffect(() => {
     setCachedState(key, value);
   }, [key, value]);
-  return [value, setValue];
+  return [value === null ? initialState : value, setValue];
 };

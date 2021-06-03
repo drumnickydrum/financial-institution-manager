@@ -15,7 +15,7 @@ export const fetchZIP = (zip) => fetchCacheFirst(ZIPCODES_URL(zip));
  *  FDIC API
  */
 export const FDIC_API = 'https://banks.data.fdic.gov/api';
-export const INSTITUTIONS_ENDPOINT = (zip) => `/institutions?filters=ZIP%3A%22${zip}%22`; // add ACTIVE%3A1%20AND%20 to filters for active (not enough for interesting results)
+export const INSTITUTIONS_ENDPOINT = (zip) => `/institutions?filters=ZIP%3A%22${zip}%22`; // add ACTIVE%3A1%20AND%20 to filters for active
 export const FDIC_URL = (zip) => `${FDIC_API}${INSTITUTIONS_ENDPOINT(zip)}`;
 
 export const fetchFDIC = async (zip) => fetchCacheFirst(FDIC_URL(zip));

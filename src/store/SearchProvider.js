@@ -4,6 +4,8 @@ import { createContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useStateAndCache } from 'hooks/useStateAndCache';
 import { searchByZip, searchByZipMultiple } from './functions/searchByZip';
+import { useRef } from 'react';
+import { useIsMounted } from 'hooks/useIsMounted';
 
 class Results {
   constructor(zipSearched = '') {
@@ -20,6 +22,7 @@ export const SearchState = createContext();
 export const SearchResults = createContext();
 
 export const SearchProvider = ({ children }) => {
+  const isMountedRef = useIsMounted(); // for test env
   const history = useHistory();
 
   const [results, setResults] = useStateAndCache('results', new Results());
@@ -43,6 +46,7 @@ export const SearchProvider = ({ children }) => {
       newResults.fiList = data.results.fdic;
     }
     if (newResults.fiList.length > 0) fwdToPath = PATHS.RESULTS;
+    if (!isMountedRef.current) return; // for test env
     setResults(newResults);
     setLoading(false);
   };

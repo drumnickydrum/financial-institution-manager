@@ -6,14 +6,14 @@ import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider'
 export const Search = () => {
   const { search, searchNearby } = useContext(SearchActions);
   const { loading, error } = useContext(SearchState);
-  const results = useContext(SearchResults);
+  const { nearbyZips, fiList, zipSearched } = useContext(SearchResults);
 
   const [alreadySearched, setAlreadySearched] = useState(false);
   const [zipInput, setZipInput] = useState('');
   const [userError, setUserError] = useState('');
 
-  const canSearchNearby = results?.nearbyZips?.length > 0;
-  const noResults = alreadySearched && results?.fiList?.length === 0;
+  const canSearchNearby = nearbyZips.length > 0;
+  const noResults = alreadySearched && fiList.length === 0;
   const errorMessage = userError || getErrorMessage(error, zipInput);
 
   const zipChange = ({ target: { value } }) => {
@@ -42,7 +42,7 @@ export const Search = () => {
       errorMessage={errorMessage}
       zipInput={zipInput}
       zipChange={zipChange}
-      zipSearched={results?.zipSearched || ''}
+      zipSearched={zipSearched}
     />
   );
 };
