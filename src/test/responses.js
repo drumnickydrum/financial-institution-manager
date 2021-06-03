@@ -16,14 +16,26 @@ export const FDIC_NO_RESULTS_RESPONSE = { data: [], totals: { count: 0 } };
 export const FDIC_NO_RESULTS_RETURN = [];
 export const FDIC_RESULTS_RESPONSE = {
   data: [
-    { data: { ZIP: '90210', NAME: 'BANK1', ID: '1' } },
+    {
+      data: {
+        ZIP: '90210',
+        NAME: 'BANK1',
+        ID: '1',
+        ADDRESS: 'ADDRESS',
+      },
+    },
     { data: { ZIP: '90210', NAME: 'BANK2', ID: '2' } },
     { data: { ZIP: '90210', NAME: 'BANK3', ID: '3' } },
   ],
   totals: { count: 3 },
 };
 export const FDIC_RESULTS_RETURN = [
-  { ZIP: '90210', NAME: 'BANK1', ID: '1' },
+  {
+    ZIP: '90210',
+    NAME: 'BANK1',
+    ID: '1',
+    ADDRESS: 'ADDRESS',
+  },
   { ZIP: '90210', NAME: 'BANK2', ID: '2' },
   { ZIP: '90210', NAME: 'BANK3', ID: '3' },
 ];

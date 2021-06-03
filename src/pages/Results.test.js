@@ -31,10 +31,6 @@ describe('Results Page', () => {
     userEvent.click(goBackBtn);
   });
 
-  it('true', () => {
-    expect(true).toBeTruthy();
-  });
-
   it('Displays results', () => {
     screen.getByText(FDIC_RESULTS_RETURN[0].NAME);
     screen.getByText(FDIC_RESULTS_RETURN[1].NAME);

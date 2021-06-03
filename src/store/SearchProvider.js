@@ -4,7 +4,6 @@ import { createContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useStateAndCache } from 'hooks/useStateAndCache';
 import { searchByZip, searchByZipMultiple } from './functions/searchByZip';
-import { useRef } from 'react';
 import { useIsMounted } from 'hooks/useIsMounted';
 
 class Results {

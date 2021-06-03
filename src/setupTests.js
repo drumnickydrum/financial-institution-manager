@@ -20,6 +20,11 @@ import {
   ZIP_NO_NEARBY_RESPONSE,
   ZIP_NEARBY_RESPONSE,
 } from './test/responses';
+import FDBFactory from 'fake-indexeddb/build/FDBFactory';
+
+require('fake-indexeddb/auto');
+
+export const resetIDB = () => (indexedDB = new FDBFactory());
 
 nock.disableNetConnect(); // throw error if req on un-mocked url
 
