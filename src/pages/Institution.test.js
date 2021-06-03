@@ -1,15 +1,15 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../App';
+import App, { PATHS } from '../App';
 import { FDIC_API_MOCK, ZIP_API_MOCK } from 'setupTests';
 import { searchFormText } from './Search';
 import { input } from 'pages/Search.test';
 import { VALID_ZIP_WITH_RESULTS } from 'test/inputs';
 import { resultsText } from './Results';
-import { FDIC_NEARBY_RETURN, FDIC_RESULTS_RETURN } from 'test/responses';
-import { favoriteButtonText } from 'components/FavoriteButton';
+import { FDIC_RESULTS_RETURN } from 'test/responses';
 import { institutionText } from './Institution';
+import { favBtn } from 'test/helpers';
 
 const debug = (chars) => screen.debug(document.body, chars);
 
@@ -69,12 +69,15 @@ describe('Institution Page', () => {
       userEvent.type(notesTextArea, 'first');
       userEvent.click(saveBtn());
       expect(notesTextArea).toHaveValue('first');
+
       userEvent.type(notesTextArea, '+second');
       expect(notesTextArea).toHaveValue('first');
+
       userEvent.click(editBtn());
       userEvent.type(notesTextArea, '+second');
       userEvent.click(cancelBtn());
       expect(notesTextArea).toHaveValue('first');
+
       userEvent.click(editBtn());
       userEvent.type(notesTextArea, '+second');
       userEvent.click(saveBtn());
@@ -88,12 +91,37 @@ describe('Institution Page', () => {
       userEvent.click(saveBtn());
       const savedValue = `${notesInitial}+saved`;
       expect(notesTextArea).toHaveValue(savedValue);
+
       userEvent.click(goBackToResults);
       expect(window.location.pathname.match(/results/)[0]).toBeTruthy();
       fiItem = screen.getByText(fi.NAME);
       userEvent.click(fiItem);
       notesTextArea = getNotesTextArea();
       expect(notesTextArea).toHaveValue(savedValue);
+    });
+
+    it('Favorite property persists between search & results pages', () => {
+      expect(favBtn.getFavIcon()).toBeNull();
+      expect(favBtn.getNotFavIcon()).toBeTruthy();
+
+      userEvent.click(favBtn.getFavBtn(false));
+      expect(favBtn.getFavIcon()).toBeTruthy();
+      expect(favBtn.getNotFavIcon()).toBeNull();
+
+      userEvent.click(goBackToResults);
+      expect(window.location.pathname).toBe(PATHS.RESULTS);
+      expect(favBtn.getFavIcon()).toBeTruthy();
+      expect(favBtn.getNotFavIcon()).toBeNull();
+
+      userEvent.click(favBtn.getFavBtn(true));
+      expect(favBtn.getFavIcon()).toBeNull();
+      expect(favBtn.getNotFavIcon()).toBeTruthy();
+
+      fiItem = screen.getByText(fi.NAME);
+      userEvent.click(fiItem);
+      expect(window.location.pathname).toBe(PATHS.INSTITUTION + fi.ID);
+      expect(favBtn.getFavIcon()).toBeNull();
+      expect(favBtn.getNotFavIcon()).toBeTruthy();
     });
   });
 });

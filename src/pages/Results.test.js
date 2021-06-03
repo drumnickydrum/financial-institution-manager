@@ -8,7 +8,7 @@ import { input } from 'pages/Search.test';
 import { VALID_ZIP_WITH_RESULTS } from 'test/inputs';
 import { resultsText } from './Results';
 import { FDIC_NEARBY_RETURN, FDIC_RESULTS_RETURN } from 'test/responses';
-import { favoriteButtonText } from 'components/FavoriteButton';
+import { favBtn } from 'test/helpers';
 
 describe('Results Page', () => {
   let goBackBtn;
@@ -49,16 +49,11 @@ describe('Results Page', () => {
   });
 
   it('Toggles favorites', async () => {
-    const name = FDIC_RESULTS_RETURN[0].NAME;
-    const favBtn = screen.getByLabelText(favoriteButtonText.toggleFavorite(name, false));
-    const favIconLabel = favoriteButtonText.favoriteLabel(name);
-    const notFavIconLabel = favoriteButtonText.notFavoriteLabel(name);
+    expect(favBtn.getFavIcon()).toBeNull();
+    expect(favBtn.getNotFavIcon()).toBeTruthy();
 
-    expect(screen.queryByLabelText(favIconLabel)).toBeNull();
-    screen.getByLabelText(notFavIconLabel);
-
-    userEvent.click(favBtn);
-    screen.getByLabelText(favIconLabel);
-    expect(screen.queryByLabelText(notFavIconLabel)).toBeNull();
+    userEvent.click(favBtn.getFavBtn());
+    expect(favBtn.getFavIcon()).toBeTruthy();
+    expect(favBtn.getNotFavIcon()).toBeNull();
   });
 });

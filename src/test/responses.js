@@ -53,25 +53,6 @@ export const FDIC_NEARBY_RETURN = [
   { ZIP: '90209', NAME: 'BANK6' },
 ];
 
-export const FAVORITES = ['1', '2'];
-export const NOTES = [
-  {
-    ID: '1',
-    notes:
-      'NOTE 1 Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum inventore reprehenderit fugiat! ',
-  },
-  {
-    ID: '2',
-    notes:
-      'NOTE 2 Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum inventore reprehenderit fugiat! Sint veniam repudiandae eaque officiis eum dicta commodi reprehenderit quo fugiat.',
-  },
-  {
-    ID: '3',
-    notes:
-      'NOTE 3 Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum inventore reprehenderit fugiat! Sint veniam repudiandae eaque officiis eum dicta commodi reprehenderit quo fugiat. Corrupti iusto, quasi fugiat incidunt officia quidem.',
-  },
-];
-
 // Ex: ZIP code api responds with no results
 // {
 //   query: {
