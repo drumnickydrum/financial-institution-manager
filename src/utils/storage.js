@@ -1,14 +1,10 @@
 import { retry, RETRY_DELAY } from './retry';
+import { get, set } from 'idb-keyval';
 
-/**
- *  get/setCache get/setCachedState are proxies for however we will use storage.
- *  NOTE: localStorage is synchronous, most other methods will require async handling.
- *  So let's just return a Promise now so we can easily swap implementations.
- */
-export const getCachedState = async (key) => getLS(key);
-export const setCachedState = async (key, value) => setLS(key, value);
-export const getCache = async (key) => getLS(key);
-export const setCache = async (key, value) => setLS(key, value);
+export const getCachedState = (key) => get(key);
+export const setCachedState = (key, value) => set(key, value);
+export const getCache = (key) => get(key);
+export const setCache = (key, value) => set(key, value);
 
 export const fetchCacheFirst = async (url) => {
   const cached = await getCache(url);
