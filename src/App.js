@@ -5,6 +5,7 @@ import { SearchProvider } from 'store/SearchProvider';
 import { Results } from 'pages/Results';
 import { Test } from 'pages/Test';
 import { CssBaseline } from '@material-ui/core';
+import { Institution } from 'pages/Institution';
 
 export const PATHS = {
   BASE: '/',
@@ -25,7 +26,7 @@ function App() {
           <Route path={PATHS.SEARCH} component={Search} />
           <Route path={PATHS.RESULTS} component={Results} />
           <Route path={PATHS.FAVORITES} component={Favorites} />
-          <Route path={`${PATHS.INSTITUTION}:id`} component={Institution} />
+          <Route path={`${PATHS.INSTITUTION}:ID`} component={Institution} />
           <Route path='/test' component={Test} />
         </SearchProvider>
       </UserProvider>
@@ -37,8 +38,4 @@ export default App;
 
 function Favorites() {
   return 'Favorites';
-}
-
-function Institution() {
-  return 'Institution';
 }

@@ -61,10 +61,6 @@ describe('Results Page', () => {
     expect(screen.queryByLabelText(favIconLabel)).toBeNull();
     screen.getByLabelText(notFavIconLabel);
 
-    userEvent.click(item);
-    expect(screen.queryByLabelText(favIconLabel)).toBeNull();
-    screen.getByLabelText(notFavIconLabel);
-
     userEvent.click(favBtn);
     screen.getByLabelText(favIconLabel);
     expect(screen.queryByLabelText(notFavIconLabel)).toBeNull();

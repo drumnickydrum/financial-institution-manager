@@ -49,7 +49,7 @@ export const SearchProvider = ({ children }) => {
 
   const searchNearby = async () => {
     setLoading(true);
-    const zips = results.nearbyZips.slice(0, 6);
+    const zips = results.nearbyZips.slice(0, 10);
     const newResults = new Results(zips.join());
     const data = await searchByZipMultiple(zips);
     if (data.error?.match(/rejected/)) setError(data.error);
@@ -58,11 +58,12 @@ export const SearchProvider = ({ children }) => {
       newResults.fiList = data.results;
     }
     setResults(newResults);
+    setLoading(false);
   };
 
   const searchNearbyAndAddToResults = async () => {
     setLoading(true);
-    const zips = results.nearbyZips.slice(0, 6);
+    const zips = results.nearbyZips.slice(0, 10);
     const data = await searchByZipMultiple(zips);
     if (data.error) setError(data.error);
     else {

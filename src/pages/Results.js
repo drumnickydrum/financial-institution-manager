@@ -73,6 +73,7 @@ const ResultsJSX = ({
 };
 
 const FiItem = ({ item }) => {
+  const history = useHistory();
   const { favorites } = useContext(UserInput);
   const { addToFavorites, removeFromFavorites } = useContext(UserInputActions);
 
@@ -84,13 +85,17 @@ const FiItem = ({ item }) => {
     else addToFavorites(item);
   };
 
+  const onContainerClick = () => {
+    history.push(`${PATHS.INSTITUTION}${item.ID}`);
+  };
+
   return (
     <Card
       variant='outlined'
       raised
       style={{ display: 'flex', margin: '10px', padding: '10px' }}
     >
-      <Container>
+      <Container onClick={onContainerClick}>
         <Typography variant='body1'>{item.NAME}</Typography>
         <Typography variant='body2'>{item.ADDRESS}</Typography>
         <Typography variant='body2'>
