@@ -27,7 +27,7 @@ export const TopAppBar = () => {
   const classes = useStyles();
   return (
     <AppBar>
-      <Toolbar>
+      <Toolbar style={{ maxWidth: '900px', width: '100%', margin: '0 auto' }}>
         <Grid
           container
           direction='row'

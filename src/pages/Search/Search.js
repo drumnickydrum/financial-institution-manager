@@ -91,6 +91,7 @@ const SearchJSX = ({
       </Typography>
       <form onSubmit={onSearchSubmit}>
         <TextField
+          className={classes.input}
           placeholder={searchFormText.placeholder}
           error={Boolean(errorMessage)}
           helperText={errorMessage}
@@ -98,12 +99,7 @@ const SearchJSX = ({
           onChange={zipChange}
           inputProps={{ type: 'tel' }}
         ></TextField>
-        <Button
-          className={classes.searchBtn}
-          variant='contained'
-          color='primary'
-          type='submit'
-        >
+        <Button className={classes.input} variant='contained' color='primary' type='submit'>
           {searchFormText.submitBtn}
         </Button>
       </form>
@@ -113,7 +109,7 @@ const SearchJSX = ({
             or
           </Typography>
           <Button
-            className={classes.favBtn}
+            className={classes.input}
             variant='contained'
             color='primary'
             onClick={() => goTo(PATHS.FAVORITES)}

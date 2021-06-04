@@ -11,12 +11,7 @@ const useStyles = makeStyles({
       },
     },
   },
-  searchBtn: {
-    display: 'block',
-    margin: '1rem auto',
-    width: '250px',
-  },
-  favBtn: {
+  input: {
     display: 'block',
     margin: '1rem auto',
     width: '250px',
