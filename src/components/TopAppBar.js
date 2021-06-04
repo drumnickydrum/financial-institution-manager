@@ -35,7 +35,7 @@ export const TopAppBar = () => {
           alignItems='center'
           spacing={3}
         >
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <IconButton
               edge='start'
               disabled={isHome}
@@ -45,15 +45,18 @@ export const TopAppBar = () => {
               <ArrowBackIcon />
             </IconButton>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={6}>
             <Typography variant='h6' component='h1' align='center'>
               {page}
             </Typography>
           </Grid>
-          <Grid item xs={2} className={classes.navBtns}>
+          <Grid item xs={3} className={classes.navBtns}>
             <IconButton
               edge='start'
               aria-label={toolbarText.labels.goToSearch}
+              className={classes.navBtnItem}
+              style={{ marginRight: '1rem' }}
+              disabled={pathname === PATHS.SEARCH}
               onClick={() => goTo(PATHS.SEARCH)}
             >
               <SearchIcon />
@@ -61,6 +64,8 @@ export const TopAppBar = () => {
             <IconButton
               edge='start'
               aria-label={toolbarText.labels.goToFavorites}
+              className={classes.navBtnItem}
+              disabled={pathname === PATHS.FAVORITES}
               onClick={() => goTo(PATHS.FAVORITES)}
             >
               <FavoriteBorderIcon />
