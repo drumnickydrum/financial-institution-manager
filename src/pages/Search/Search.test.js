@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../App';
+import App from '../../App';
 import {
   INVALID_ZIP,
   INVALID_ZIP_LENGTH,
@@ -11,7 +11,7 @@ import {
   FDIC_REJECTS,
   ZIP_REJECTS,
 } from 'test/inputs';
-import { searchFormText } from 'pages/Search';
+import { searchFormText } from 'pages/Search/Search';
 import { resultsPendingText } from './ResultsPending';
 import { FDIC_API_MOCK, ZIP_API_MOCK } from 'setupTests';
 import {

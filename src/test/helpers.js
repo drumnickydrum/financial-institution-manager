@@ -1,8 +1,8 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { favoriteButtonText } from 'components/FavoriteButton';
 import { toolbarText } from 'components/TopAppBar';
-import { institutionText } from 'pages/Institution';
-import { searchFormText } from 'pages/Search';
+import { institutionText } from 'pages/Institution/Institution';
+import { searchFormText } from 'pages/Search/Search';
 import { FDIC_RESULTS_RETURN } from './responses';
 
 export const debug = (chars) => screen.debug(document.body, chars);

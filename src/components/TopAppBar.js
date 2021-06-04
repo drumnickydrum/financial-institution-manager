@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { useContext } from 'react';
-import useStyles from 'pages/TopAppBar.styles';
+import useStyles from 'components/TopAppBar.styles';
 
 export const TopAppBar = () => {
   const pathname = useLocation().pathname;

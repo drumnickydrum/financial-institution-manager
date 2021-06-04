@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../App';
+import App from '../../App';
 import { PATHS } from 'store/GoToProvider';
 import { FDIC_API_MOCK, ZIP_API_MOCK } from 'setupTests';
 import {

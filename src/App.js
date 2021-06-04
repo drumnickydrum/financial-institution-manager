@@ -1,12 +1,11 @@
 import { BrowserRouter, Redirect, Route } from 'react-router-dom';
 import { UserProvider } from 'store/UserProvider';
-import { Search } from 'pages/Search';
+import { Search } from 'pages/Search/Search';
 import { SearchProvider } from 'store/SearchProvider';
-import { Results } from 'pages/Results';
-import { Test } from 'pages/Test';
+import { Results } from 'pages/Results/Results';
 import { createMuiTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
-import { Institution } from 'pages/Institution';
-import { Favorites } from 'pages/Favorites';
+import { Institution } from 'pages/Institution/Institution';
+import { Favorites } from 'pages/Favorites/Favorites';
 import { TopAppBar } from 'components/TopAppBar';
 import { GoToProvider, PATHS } from 'store/GoToProvider';
 import { deepPurple, red } from '@material-ui/core/colors';
@@ -38,7 +37,6 @@ function App() {
               <Route path={PATHS.RESULTS} component={Results} />
               <Route path={PATHS.FAVORITES} component={Favorites} />
               <Route path={`${PATHS.INSTITUTION}:ID`} component={Institution} />
-              <Route path='/test' component={Test} />
             </ThemeProvider>
           </SearchProvider>
         </UserProvider>
