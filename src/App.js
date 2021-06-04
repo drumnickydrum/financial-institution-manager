@@ -9,6 +9,7 @@ import { Favorites } from 'pages/Favorites/Favorites';
 import { TopAppBar } from 'components/TopAppBar';
 import { GoToProvider, PATHS } from 'store/GoToProvider';
 import { deepPurple, red } from '@material-ui/core/colors';
+import { ResultsPending } from 'pages/Search/ResultsPending';
 
 const theme = createMuiTheme({
   palette: {
@@ -37,6 +38,7 @@ function App() {
               <Route path={PATHS.RESULTS} component={Results} />
               <Route path={PATHS.FAVORITES} component={Favorites} />
               <Route path={`${PATHS.INSTITUTION}:ID`} component={Institution} />
+              <Route path='/pending' component={ResultsPending} />
             </ThemeProvider>
           </SearchProvider>
         </UserProvider>
