@@ -34,7 +34,7 @@ export const Favorites = () => {
         </>
       ) : (
         <>
-          <Grid container spacing={3}>
+          <Grid container justify='center' spacing={3}>
             {Object.values(favorites).map((fi) => (
               <Grid item key={fi.ID} xs={12} sm={6} md={4}>
                 <Card className={classes.card} id={fi.ID} onClick={onClick}>
