@@ -35,7 +35,7 @@ export const TopAppBar = () => {
           alignItems='center'
           spacing={3}
         >
-          <Grid item xs>
+          <Grid item xs={2}>
             <IconButton
               edge='start'
               disabled={isHome}
@@ -45,12 +45,12 @@ export const TopAppBar = () => {
               <ArrowBackIcon />
             </IconButton>
           </Grid>
-          <Grid item xs>
+          <Grid item xs={8}>
             <Typography variant='h6' component='h1' align='center'>
               {page}
             </Typography>
           </Grid>
-          <Grid item xs className={classes.navBtns}>
+          <Grid item xs={2} className={classes.navBtns}>
             <IconButton
               edge='start'
               aria-label={toolbarText.labels.goToSearch}
