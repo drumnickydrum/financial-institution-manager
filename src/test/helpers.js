@@ -46,6 +46,9 @@ export const favBtn = {
   getFav3Btn(isFavorite) {
     return screen.getByLabelText(this.favBtnLabelText(2, isFavorite));
   },
+  getFavTextBtn(isFavorite) {
+    return screen.getByText(favoriteButtonText.textToggleFavorite(isFavorite));
+  },
   getFavIcon() {
     return screen.queryByLabelText(this.favLabelText);
   },

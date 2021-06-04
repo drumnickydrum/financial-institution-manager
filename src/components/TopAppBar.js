@@ -1,12 +1,13 @@
-import { AppBar, Container, IconButton, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Grid, IconButton, Toolbar, Typography } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import SearchIcon from '@material-ui/icons/Search';
-import { PATHS, GoTo } from 'store/GoToProvider';
+import { PATHS, GoTo, PrevPath } from 'store/GoToProvider';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { useContext } from 'react';
+import useStyles from 'pages/TopAppBar.styles';
 
 export const TopAppBar = () => {
   const pathname = useLocation().pathname;
@@ -17,42 +18,55 @@ export const TopAppBar = () => {
   }, [page, pathname]);
 
   const goTo = useContext(GoTo);
+  const prevPathRef = useContext(PrevPath);
 
   const goBack = () => goTo('back');
 
-  const backBtnStyles = {
-    visibility: page !== toolbarText.titles.search ? 'visible' : 'hidden',
-  };
+  const isHome = prevPathRef.current.length === 0;
 
+  const classes = useStyles();
   return (
     <AppBar>
-      <Toolbar style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-        <IconButton
-          style={backBtnStyles}
-          edge='start'
-          aria-label={toolbarText.labels.goBack}
-          onClick={goBack}
+      <Toolbar>
+        <Grid
+          container
+          direction='row'
+          justify='space-between'
+          alignItems='center'
+          spacing={3}
         >
-          <ArrowBackIcon />
-        </IconButton>
-
-        <Typography variant='h6'>{page}</Typography>
-        <Container>
-          <IconButton
-            edge='start'
-            aria-label={toolbarText.labels.goToSearch}
-            onClick={() => goTo(PATHS.SEARCH)}
-          >
-            <SearchIcon />
-          </IconButton>
-          <IconButton
-            edge='start'
-            aria-label={toolbarText.labels.goToFavorites}
-            onClick={() => goTo(PATHS.FAVORITES)}
-          >
-            <FavoriteBorderIcon />
-          </IconButton>
-        </Container>
+          <Grid item xs>
+            <IconButton
+              edge='start'
+              disabled={isHome}
+              aria-label={toolbarText.labels.goBack}
+              onClick={goBack}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Grid>
+          <Grid item xs>
+            <Typography variant='h6' component='h1' align='center'>
+              {page}
+            </Typography>
+          </Grid>
+          <Grid item xs className={classes.navBtns}>
+            <IconButton
+              edge='start'
+              aria-label={toolbarText.labels.goToSearch}
+              onClick={() => goTo(PATHS.SEARCH)}
+            >
+              <SearchIcon />
+            </IconButton>
+            <IconButton
+              edge='start'
+              aria-label={toolbarText.labels.goToFavorites}
+              onClick={() => goTo(PATHS.FAVORITES)}
+            >
+              <FavoriteBorderIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
       </Toolbar>
     </AppBar>
   );
@@ -72,7 +86,7 @@ export const toolbarText = {
     goToFavorites: 'go to my favorites page',
   },
   titles: {
-    search: 'F.I. Manager',
+    search: 'New Search',
     results: 'Results',
     institution: 'Info',
     favorites: 'Favorites',

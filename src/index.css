@@ -1,9 +1,19 @@
-body {
-  margin: 0;
+.MuiContainer-root,
+.MuiTypography-root {
+  padding: 1rem;
+}
+
+.MuiTypography-root.MuiTypography-body1,
+.MuiTypography-root.MuiTypography-body2,
+.MuiTypography-root.MuiTypography-overline {
   padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+}
+
+.MuiInput-root,
+.MuiButton-root {
+  margin: 2rem;
+}
+
+.MuiButton-root {
+  max-width: 250px;
 }

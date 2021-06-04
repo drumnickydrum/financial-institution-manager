@@ -96,7 +96,7 @@ describe('Institution Page', () => {
       expect(favBtn.getFavIcon()).toBeNull();
       expect(favBtn.getNotFavIcon()).toBeTruthy();
 
-      userEvent.click(favBtn.getFavBtn(false));
+      userEvent.click(favBtn.getFavTextBtn(false)); // getFavTextBtn on Inst page
       expect(favBtn.getFavIcon()).toBeTruthy();
       expect(favBtn.getNotFavIcon()).toBeNull();
 
@@ -105,7 +105,7 @@ describe('Institution Page', () => {
       expect(favBtn.getFavIcon()).toBeTruthy();
       expect(favBtn.getNotFavIcon()).toBeNull();
 
-      userEvent.click(favBtn.getFavBtn(true));
+      userEvent.click(favBtn.getFavBtn(true)); // getFavBtn on Results page
       expect(favBtn.getFavIcon()).toBeNull();
       expect(favBtn.getNotFavIcon()).toBeTruthy();
       fiItem = screen.getByText(fi.NAME);

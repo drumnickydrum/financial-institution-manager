@@ -3,6 +3,7 @@ import { PATHS, GoTo } from 'store/GoToProvider';
 import { FavoriteButton } from 'components/FavoriteButton';
 import { useContext, useState } from 'react';
 import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
+import useStyles from './Results.styles';
 
 export const Results = () => {
   const { loading, error } = useContext(SearchState);
@@ -39,15 +40,21 @@ const ResultsJSX = ({
   loading,
   errorMessage,
 }) => {
+  const classes = useStyles();
   return (
-    <Container maxWidth='sm'>
-      <Typography variant='h6' component='h2' style={{ textAlign: 'center' }}>
+    <Container maxWidth='sm' className={classes.root}>
+      <Typography variant='h6' component='h1' align='center'>
         Financial Institutions Near {zipSearched}
       </Typography>
       {fiList &&
         fiList.map((item, i) => <FiItem key={item.ID || `FiItem${i}`} item={item} />)}
       {showNearbyBtn && (
-        <Button variant='contained' color='primary' onClick={onNearbyClick}>
+        <Button
+          className={classes.nearbyBtn}
+          variant='contained'
+          color='primary'
+          onClick={onNearbyClick}
+        >
           {resultsText.nearbyBtn}
           {zipSearched}
         </Button>
@@ -60,17 +67,14 @@ const ResultsJSX = ({
 
 const FiItem = ({ item }) => {
   const goTo = useContext(GoTo);
+  const classes = useStyles();
 
   const onContainerClick = () => {
     goTo(`${PATHS.INSTITUTION}${item.ID}`);
   };
 
   return (
-    <Card
-      variant='outlined'
-      raised
-      style={{ display: 'flex', margin: '10px', padding: '10px' }}
-    >
+    <Card variant='outlined' raised className={classes.card}>
       <Container onClick={onContainerClick}>
         <Typography variant='body1'>{item.NAME}</Typography>
         <Typography variant='body2'>{item.ADDRESS}</Typography>

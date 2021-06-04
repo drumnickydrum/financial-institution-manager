@@ -11,11 +11,12 @@ export const PATHS = {
 };
 PATHS.START = PATHS.SEARCH;
 
+export const PrevPath = createContext();
 export const GoTo = createContext();
 export const GoToProvider = ({ children }) => {
   const history = useHistory();
   const pathname = useLocation().pathname;
-  const prevPathRef = useRef([pathname]);
+  const prevPathRef = useRef([]);
 
   const goTo = (path) => {
     if (path === 'back') {
@@ -27,5 +28,9 @@ export const GoToProvider = ({ children }) => {
     }
   };
 
-  return <GoTo.Provider value={goTo}>{children}</GoTo.Provider>;
+  return (
+    <PrevPath.Provider value={prevPathRef}>
+      <GoTo.Provider value={goTo}>{children}</GoTo.Provider>
+    </PrevPath.Provider>
+  );
 };

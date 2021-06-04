@@ -1,7 +1,8 @@
-import { Button, Card, Container, Grid, Typography } from '@material-ui/core';
+import { Box, Button, Card, Container, Divider, Grid, Typography } from '@material-ui/core';
 import { PATHS, GoTo } from 'store/GoToProvider';
 import { useContext } from 'react';
 import { UserInput, UserInputActions } from 'store/UserProvider';
+import useStyles from './Favorites.styles';
 
 export const Favorites = () => {
   const goTo = useContext(GoTo);
@@ -14,6 +15,7 @@ export const Favorites = () => {
     goTo(`${PATHS.INSTITUTION}${e.currentTarget.id}`);
   };
 
+  const classes = useStyles();
   return isInitial ? null : (
     <Container>
       {Object.keys(favorites).length === 0 ? (
@@ -23,19 +25,34 @@ export const Favorites = () => {
           <Grid container spacing={3}>
             {Object.values(favorites).map((fi) => (
               <Grid item key={fi.ID} xs={12} sm={6} md={4}>
-                <Card id={fi.ID} onClick={onClick}>
-                  <Typography variant='h6'>{fi.NAME}</Typography>
-                  <Typography variant='body1'>{fi.ADDRESS}</Typography>
-                  <Typography variant='body1'>
+                <Card className={classes.card} id={fi.ID} onClick={onClick}>
+                  <Typography className={classes.name} align='center'>
+                    {fi.NAME}
+                  </Typography>
+                  <Divider />
+                  <Typography variant='body2' align='center'>
+                    {fi.ADDRESS}
+                  </Typography>
+                  <Typography variant='body2' align='center'>
                     {fi.CITY},&nbsp;{fi.STALP}&nbsp;{fi.ZIP}
                   </Typography>
-                  <Typography variant='h6'>Notes:</Typography>
-                  <Typography variant='body2'>{notes[fi.ID]}</Typography>
+                  <Box className={classes.notesBox}>
+                    <Typography>Notes:</Typography>
+                    <Divider />
+                    <Typography className={classes.notes} variant='body2'>
+                      {notes[fi.ID]}
+                    </Typography>
+                  </Box>
                 </Card>
               </Grid>
             ))}
           </Grid>
-          <Button variant='contained' color='secondary' onClick={clearAllFavorites}>
+          <Button
+            className={classes.clearAllBtn}
+            variant='contained'
+            color='secondary'
+            onClick={clearAllFavorites}
+          >
             {favoritesText.clearAll}
           </Button>
         </>

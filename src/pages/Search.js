@@ -2,6 +2,7 @@ import { Button, Container, TextField, Typography } from '@material-ui/core';
 import { useState, useContext } from 'react';
 import { ResultsPending } from './ResultsPending';
 import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
+import useStyles from './Search.styles';
 
 export const Search = () => {
   const { search, searchNearby } = useContext(SearchActions);
@@ -57,11 +58,12 @@ const SearchJSX = ({
   zipChange,
   zipSearched,
 }) => {
+  const classes = useStyles();
   return (
-    <Container maxWidth='sm'>
+    <Container maxWidth='sm' className={classes.root}>
       {noResults && (
         <>
-          <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>
+          <Typography variant='h6' component='h2' align='center'>
             {searchFormText.noResults}
             {zipSearched}
           </Typography>
@@ -70,15 +72,17 @@ const SearchJSX = ({
               <Button variant='contained' color='primary' onClick={searchNearby}>
                 {searchFormText.nearbyBtn}
               </Button>
-              <Typography variant='h4'>or</Typography>
+              <Typography variant='h6' component='h3'>
+                or
+              </Typography>
             </>
           )}
         </>
       )}
-      <Typography variant='h6' component='h1' style={{ textAlign: 'center' }}>
+      <Typography variant='h6' component='h1' align='center'>
         {noResults ? searchFormText.instructionNoResults : searchFormText.instruction}
       </Typography>
-      <form onSubmit={onSearchSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+      <form onSubmit={onSearchSubmit}>
         <TextField
           placeholder={searchFormText.placeholder}
           error={Boolean(errorMessage)}
