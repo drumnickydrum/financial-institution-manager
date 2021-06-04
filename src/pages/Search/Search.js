@@ -3,11 +3,14 @@ import { useState, useContext } from 'react';
 import { ResultsPending } from './ResultsPending';
 import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
 import useStyles from './Search.styles';
+import { UserInput } from 'store/UserProvider';
+import { GoTo, PATHS } from 'store/GoToProvider';
 
 export const Search = () => {
   const { search, searchNearby } = useContext(SearchActions);
   const { loading, error } = useContext(SearchState);
   const { nearbyZips, fiList, zipSearched } = useContext(SearchResults);
+  const { favorites } = useContext(UserInput);
 
   const [alreadySearched, setAlreadySearched] = useState(false);
   const [zipInput, setZipInput] = useState('');
@@ -16,6 +19,7 @@ export const Search = () => {
   const canSearchNearby = nearbyZips.length > 0;
   const noResults = alreadySearched && fiList.length === 0;
   const errorMessage = userError || getErrorMessage(error, zipInput);
+  const hasFavorites = Object.keys(favorites).length > 0;
 
   const zipChange = ({ target: { value } }) => {
     if (!value) return setZipInput('');
@@ -44,6 +48,7 @@ export const Search = () => {
       zipInput={zipInput}
       zipChange={zipChange}
       zipSearched={zipSearched}
+      hasFavorites={hasFavorites}
     />
   );
 };
@@ -57,7 +62,9 @@ const SearchJSX = ({
   zipInput,
   zipChange,
   zipSearched,
+  hasFavorites,
 }) => {
+  const goTo = useContext(GoTo);
   const classes = useStyles();
   return (
     <Container maxWidth='sm' className={classes.root}>
@@ -91,10 +98,30 @@ const SearchJSX = ({
           onChange={zipChange}
           inputProps={{ type: 'tel' }}
         ></TextField>
-        <Button variant='contained' color='primary' type='submit'>
+        <Button
+          className={classes.searchBtn}
+          variant='contained'
+          color='primary'
+          type='submit'
+        >
           {searchFormText.submitBtn}
         </Button>
       </form>
+      {hasFavorites && (
+        <>
+          <Typography variant='h6' component='h4' align='center'>
+            or
+          </Typography>
+          <Button
+            className={classes.favBtn}
+            variant='contained'
+            color='primary'
+            onClick={() => goTo(PATHS.FAVORITES)}
+          >
+            {searchFormText.favoritesBtn}
+          </Button>
+        </>
+      )}
     </Container>
   );
 };
@@ -106,7 +133,7 @@ export const searchFormText = {
   placeholder: 'ZIP',
   submitBtn: 'Search',
   nearbyBtn: 'Search Nearby ZIP Codes',
-  favoritesBtn: 'My Favorites',
+  favoritesBtn: 'Show My Favorites',
   errors: {
     length: 'Please enter a 5-digit U.S. zip code',
     invalid: ' is an invalid U.S. zip code',

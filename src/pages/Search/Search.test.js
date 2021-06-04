@@ -22,6 +22,8 @@ import {
   getGoToSearchBtn,
   debug,
   waitForResultsPage,
+  favBtn,
+  getFiItem,
 } from 'test/helpers';
 import { FDIC_NEARBY_RETURN } from 'test/responses';
 
@@ -93,6 +95,18 @@ describe('Search Page', () => {
     await screen.findByText((content) => content.match(searchFormText.noResults));
     userEvent.click(screen.getByText(searchFormText.nearbyBtn));
     await screen.findAllByText(FDIC_NEARBY_RETURN[0].NAME); // dup results only in test from same response object
+  });
+
+  it('Shows Favorites button if user has favs', async () => {
+    input(VALID_ZIP_WITH_RESULTS);
+    userEvent.click(getSubmitBtn());
+    await waitForResultsPage();
+    userEvent.click(favBtn.getFavBtn(false));
+    userEvent.click(getGoToSearchBtn());
+    expect(window.location.pathname.includes('search')).toBe(true);
+    userEvent.click(screen.getByText(searchFormText.favoritesBtn));
+    expect(window.location.pathname.includes('favorites')).toBe(true);
+    getFiItem();
   });
 });
 

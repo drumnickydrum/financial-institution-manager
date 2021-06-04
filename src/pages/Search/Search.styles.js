@@ -6,11 +6,20 @@ const useStyles = makeStyles({
       padding: '1rem',
       display: 'flex',
       flexDirection: 'column',
-      '& .MuiInput-root, & button': {
-        margin: '1rem auto',
-        width: '250px',
+      '& .Mui-error': {
+        textAlign: 'center',
       },
     },
+  },
+  searchBtn: {
+    display: 'block',
+    margin: '1rem auto',
+    width: '250px',
+  },
+  favBtn: {
+    display: 'block',
+    margin: '1rem auto',
+    width: '250px',
   },
 });
 
