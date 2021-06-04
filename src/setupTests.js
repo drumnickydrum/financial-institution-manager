@@ -22,6 +22,8 @@ import {
 } from './test/responses';
 import FDBFactory from 'fake-indexeddb/build/FDBFactory';
 
+jest.setTimeout(10000);
+
 require('fake-indexeddb/auto');
 
 export const resetIDB = () => (indexedDB = new FDBFactory());

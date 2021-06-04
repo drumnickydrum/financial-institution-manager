@@ -19,7 +19,19 @@ export const Favorites = () => {
   return isInitial ? null : (
     <Container>
       {Object.keys(favorites).length === 0 ? (
-        <Typography variant='h6'>{favoritesText.noFavorites}</Typography>
+        <>
+          <Typography variant='h6' align='center'>
+            {favoritesText.noFavorites}
+          </Typography>
+          <Button
+            className={classes.goToSearchBtn}
+            variant='contained'
+            color='primary'
+            onClick={() => goTo(PATHS.SEARCH)}
+          >
+            {favoritesText.goToSearch}
+          </Button>
+        </>
       ) : (
         <>
           <Grid container spacing={3}>
@@ -64,4 +76,5 @@ export const Favorites = () => {
 export const favoritesText = {
   noFavorites: 'You have no favorites',
   clearAll: 'Remove all from favorites',
+  goToSearch: 'Go to search',
 };

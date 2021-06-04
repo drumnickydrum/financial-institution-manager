@@ -39,6 +39,13 @@ describe('Favorites Page', () => {
     screen.getByText(favoritesText.noFavorites);
   });
 
+  it('Provides navigation back to search', () => {
+    userEvent.click(getGoToFavoritesBtn());
+    expect(window.location.pathname.includes('favorites')).toBe(true);
+    userEvent.click(screen.getByText(favoritesText.goToSearch));
+    expect(window.location.pathname.includes('search')).toBe(true);
+  });
+
   describe('favs', () => {
     beforeEach(async () => {
       input(VALID_ZIP_WITH_RESULTS);

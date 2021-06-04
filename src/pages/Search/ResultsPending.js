@@ -1,4 +1,4 @@
-import { Card, Container, Typography } from '@material-ui/core';
+import { Container, Typography } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import useStyles from './ResultsPending.styles';
 

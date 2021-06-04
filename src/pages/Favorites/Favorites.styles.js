@@ -29,6 +29,10 @@ const useStyles = makeStyles({
     display: 'block',
     margin: '1rem auto',
   },
+  goToSearchBtn: {
+    display: 'block',
+    margin: '1rem auto',
+  },
 });
 
 export default useStyles;
