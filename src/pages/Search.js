@@ -90,14 +90,6 @@ const SearchJSX = ({
         <Button variant='contained' color='primary' type='submit'>
           {searchFormText.submitBtn}
         </Button>
-        {/* {favorites.length > 0 && (
-          <>
-            <Typography variant='h4'>or</Typography>
-            <Button variant='contained' color='primary'>
-              {searchFormText.favoritesBtn}
-            </Button>
-          </>
-        )} */}
       </form>
     </Container>
   );

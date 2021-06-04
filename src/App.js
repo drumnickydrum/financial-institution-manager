@@ -6,36 +6,30 @@ import { Results } from 'pages/Results';
 import { Test } from 'pages/Test';
 import { CssBaseline } from '@material-ui/core';
 import { Institution } from 'pages/Institution';
-
-export const PATHS = {
-  BASE: '/',
-  SEARCH: '/search',
-  RESULTS: '/results',
-  FAVORITES: '/favorites',
-  INSTITUTION: '/institution/',
-};
-PATHS.START = PATHS.SEARCH;
+import { Favorites } from 'pages/Favorites';
+import { TopAppBar } from 'components/TopAppBar';
+import { GoToProvider, PATHS } from 'store/GoToProvider';
 
 function App() {
   return (
     <BrowserRouter basename='/'>
-      <UserProvider>
-        <SearchProvider>
-          <CssBaseline />
-          <Route path={PATHS.BASE} exact render={() => <Redirect to={PATHS.START} />} />
-          <Route path={PATHS.SEARCH} component={Search} />
-          <Route path={PATHS.RESULTS} component={Results} />
-          <Route path={PATHS.FAVORITES} component={Favorites} />
-          <Route path={`${PATHS.INSTITUTION}:ID`} component={Institution} />
-          <Route path='/test' component={Test} />
-        </SearchProvider>
-      </UserProvider>
+      <GoToProvider>
+        <UserProvider>
+          <SearchProvider>
+            <CssBaseline />
+            <TopAppBar />
+            <div id='topMargin' style={{ marginTop: '80px' }} />
+            <Route path={PATHS.BASE} exact render={() => <Redirect to={PATHS.START} />} />
+            <Route path={PATHS.SEARCH} component={Search} />
+            <Route path={PATHS.RESULTS} component={Results} />
+            <Route path={PATHS.FAVORITES} component={Favorites} />
+            <Route path={`${PATHS.INSTITUTION}:ID`} component={Institution} />
+            <Route path='/test' component={Test} />
+          </SearchProvider>
+        </UserProvider>
+      </GoToProvider>
     </BrowserRouter>
   );
 }
 
 export default App;
-
-function Favorites() {
-  return 'Favorites';
-}

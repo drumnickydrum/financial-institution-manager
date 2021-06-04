@@ -1,10 +1,10 @@
-import { PATHS } from 'App';
+import { PATHS, GoTo } from 'store/GoToProvider';
 import { useEffect } from 'react';
 import { createContext, useState } from 'react';
-import { useHistory } from 'react-router';
 import { useStateAndCache } from 'hooks/useStateAndCache';
 import { searchByZip, searchByZipMultiple } from './functions/searchByZip';
 import { useIsMounted } from 'hooks/useIsMounted';
+import { useContext } from 'react';
 
 class Results {
   constructor(zipSearched = '') {
@@ -22,7 +22,7 @@ export const SearchResults = createContext();
 
 export const SearchProvider = ({ children }) => {
   const isMountedRef = useIsMounted(); // for test env
-  const history = useHistory();
+  const goTo = useContext(GoTo);
 
   const [results, setResults] = useStateAndCache('results', new Results());
   const [error, setError] = useState('');
@@ -30,9 +30,9 @@ export const SearchProvider = ({ children }) => {
 
   useEffect(() => {
     if (!fwdToPath) return;
-    history.push(fwdToPath);
+    goTo(fwdToPath);
     fwdToPath = '';
-  }, [history, results]);
+  }, [goTo, results]);
 
   const search = async (zipInput) => {
     setLoading(true);
@@ -87,19 +87,3 @@ export const SearchProvider = ({ children }) => {
     </SearchActions.Provider>
   );
 };
-
-// const [fwd, setFwd] = useState(false);
-
-// const isInitial = useIsInitial();
-// useEffect(() => {
-//   if (isInitial) return;
-//   else setFwd(true);
-//   // eslint-disable-next-line react-hooks/exhaustive-deps
-// }, [searchResults]);
-
-// useEffect(() => {
-//   if (fwd) {
-//     history.push(PATHS.RESULTS);
-//     setFwd(false);
-//   }
-// }, [fwd, history, searchResults]);

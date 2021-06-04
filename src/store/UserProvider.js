@@ -9,7 +9,6 @@ export const UserInput = createContext();
 export const UserProvider = ({ children }) => {
   const [favorites, setFavorites] = useStateAndCache('favorites', new Favorites());
   const [notes, setNotes] = useStateAndCache('notes', new Notes());
-  //console.log(notes);
 
   const addToFavorites = (item) => {
     setFavorites((prev) => {

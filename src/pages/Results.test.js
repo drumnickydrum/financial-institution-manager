@@ -3,35 +3,33 @@ import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { FDIC_API_MOCK, ZIP_API_MOCK } from 'setupTests';
-import { searchFormText } from './Search';
-import { input } from 'pages/Search.test';
 import { VALID_ZIP_WITH_RESULTS } from 'test/inputs';
 import { resultsText } from './Results';
 import { FDIC_NEARBY_RETURN, FDIC_RESULTS_RETURN } from 'test/responses';
-import { favBtn } from 'test/helpers';
+import {
+  input,
+  favBtn,
+  getGoToSearchBtn,
+  waitForResultsPage,
+  getSubmitBtn,
+} from 'test/helpers';
 
 describe('Results Page', () => {
-  let goBackBtn;
   beforeEach(async () => {
     ZIP_API_MOCK();
     FDIC_API_MOCK();
     render(<App />);
 
-    const zipInput = await screen.findByPlaceholderText(searchFormText.placeholder);
-    const submitBtn = screen.getByText(searchFormText.submitBtn).closest('button');
-    input(zipInput, VALID_ZIP_WITH_RESULTS);
-    userEvent.click(submitBtn);
-    const goBackBtnText = await screen.findByText((content) =>
-      content.includes(resultsText.goBackBtn)
-    );
-    goBackBtn = goBackBtnText.closest('button');
+    input(VALID_ZIP_WITH_RESULTS);
+    userEvent.click(getSubmitBtn());
+    await waitForResultsPage();
   });
 
   afterEach(() => {
-    userEvent.click(goBackBtn);
+    userEvent.click(getGoToSearchBtn());
   });
 
-  it('Displays results', () => {
+  it('Displays results', async () => {
     screen.getByText(FDIC_RESULTS_RETURN[0].NAME);
     screen.getByText(FDIC_RESULTS_RETURN[1].NAME);
     screen.getByText(FDIC_RESULTS_RETURN[2].NAME);

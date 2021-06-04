@@ -5,8 +5,8 @@ export const INVALID_ZIP = '99999';
 export const INVALID_ZIP_LENGTH = '1234';
 export const NEARBY_ZIP1 = '90209';
 export const NEARBY_ZIP2 = '90213';
-export const ZIP_REJECTS = 'ZIP_REJECTS';
-export const FDIC_REJECTS = 'FDIC_REJECTS';
+export const ZIP_REJECTS = '00002';
+export const FDIC_REJECTS = '00003';
 export const MULTIPLE_ZIPS = [
   VALID_ZIP_WITH_RESULTS,
   VALID_ZIP_NO_RESULTS,

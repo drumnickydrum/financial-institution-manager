@@ -1,44 +1,47 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App, { PATHS } from '../App';
+import App from '../App';
+import { PATHS } from 'store/GoToProvider';
 import { FDIC_API_MOCK, ZIP_API_MOCK } from 'setupTests';
-import { searchFormText } from './Search';
-import { input } from 'pages/Search.test';
+import {
+  getNotesCancelBtn,
+  getNotesEditBtn,
+  getNotesSaveBtn,
+  getSubmitBtn,
+  input,
+  queryNotesTextArea,
+} from 'test/helpers';
 import { VALID_ZIP_WITH_RESULTS } from 'test/inputs';
-import { resultsText } from './Results';
 import { FDIC_RESULTS_RETURN } from 'test/responses';
-import { institutionText } from './Institution';
-import { favBtn } from 'test/helpers';
-
-const debug = (chars) => screen.debug(document.body, chars);
+import {
+  debug,
+  favBtn,
+  getGoBackBtn,
+  getGoToSearchBtn,
+  waitForResultsPage,
+  getNotes,
+} from 'test/helpers';
 
 const fi = FDIC_RESULTS_RETURN[0];
 
 describe('Institution Page', () => {
-  let goBackToSearch, goBackToResults, fiItem;
+  let fiItem;
   beforeEach(async () => {
     ZIP_API_MOCK();
     FDIC_API_MOCK();
     render(<App />);
 
-    const zipInput = await screen.findByPlaceholderText(searchFormText.placeholder);
-    const submitBtn = screen.getByText(searchFormText.submitBtn).closest('button');
-    input(zipInput, VALID_ZIP_WITH_RESULTS);
-    userEvent.click(submitBtn);
-    goBackToSearch = await screen.findByText((content) =>
-      content.includes(resultsText.goBackBtn)
-    );
-    goBackToSearch = goBackToSearch.closest('button');
+    input(VALID_ZIP_WITH_RESULTS);
+    userEvent.click(getSubmitBtn());
+    await waitForResultsPage();
+
     fiItem = screen.getByText(fi.NAME);
     userEvent.click(fiItem);
-    goBackToResults = screen.getByText(institutionText.goBackBtn).closest('button');
   });
 
   afterEach(() => {
-    userEvent.click(goBackToResults);
-    goBackToSearch = screen.getByText(resultsText.goBackBtn).closest('button');
-    userEvent.click(goBackToSearch);
+    userEvent.click(getGoToSearchBtn());
   });
 
   it('Renders financial institution information', () => {
@@ -47,57 +50,46 @@ describe('Institution Page', () => {
   });
 
   describe('Editing notes', () => {
-    const getNotesTextArea = () => {
-      return screen.getByLabelText(institutionText.notesLabel);
-    };
-    let notesTextArea;
-    const editBtn = () => screen.getByText(institutionText.editNotesBtn);
-    const saveBtn = () => screen.getByText(institutionText.saveNotesBtn);
-    const cancelBtn = () => screen.getByText(institutionText.cancelEditsBtn);
-    beforeEach(() => {
-      notesTextArea = getNotesTextArea();
-    });
-
     it('Notes are readonly until edit enabled', () => {
-      expect(notesTextArea).toHaveValue('');
-      userEvent.type(notesTextArea, 'asdf');
-      expect(notesTextArea).toHaveValue('');
+      getNotes();
+      expect(queryNotesTextArea()).toBeNull();
     });
 
-    it('Edit/Save/Cancel notes textarea', () => {
-      userEvent.click(editBtn());
-      userEvent.type(notesTextArea, 'first');
-      userEvent.click(saveBtn());
-      expect(notesTextArea).toHaveValue('first');
+    it('Edit/Save/Cancel notes textarea', async () => {
+      userEvent.click(getNotesEditBtn());
+      userEvent.type(queryNotesTextArea(), 'first');
+      userEvent.click(getNotesSaveBtn());
+      expect(getNotes()).toHaveTextContent('first');
 
-      userEvent.type(notesTextArea, '+second');
-      expect(notesTextArea).toHaveValue('first');
+      userEvent.type(getNotes(), '+second');
+      expect(getNotes()).toHaveTextContent('first');
 
-      userEvent.click(editBtn());
-      userEvent.type(notesTextArea, '+second');
-      userEvent.click(cancelBtn());
-      expect(notesTextArea).toHaveValue('first');
+      userEvent.click(getNotesEditBtn());
+      userEvent.type(queryNotesTextArea(), '+second');
+      userEvent.click(getNotesCancelBtn());
+      expect(getNotes()).toHaveTextContent('first');
 
-      userEvent.click(editBtn());
-      userEvent.type(notesTextArea, '+second');
-      userEvent.click(saveBtn());
-      expect(notesTextArea).toHaveValue('first+second');
+      userEvent.click(getNotesEditBtn());
+      userEvent.type(queryNotesTextArea(), '+second');
+      userEvent.click(getNotesSaveBtn());
+      expect(getNotes()).toHaveTextContent('first+second');
     });
 
-    it('Remembers notes after re-mount', () => {
-      const notesInitial = notesTextArea.value;
-      userEvent.click(editBtn());
-      userEvent.type(notesTextArea, '+saved');
-      userEvent.click(saveBtn());
+    it('Remembers notes after re-mount', async () => {
+      const notesInitial = getNotes().innerHTML;
+      userEvent.click(getNotesEditBtn());
+      userEvent.type(queryNotesTextArea(), '+saved');
+      userEvent.click(getNotesSaveBtn());
       const savedValue = `${notesInitial}+saved`;
-      expect(notesTextArea).toHaveValue(savedValue);
 
-      userEvent.click(goBackToResults);
+      expect(getNotes()).toHaveTextContent(savedValue);
+      expect(window.location.pathname.match(/institution/)[0]).toBeTruthy();
+      userEvent.click(getGoBackBtn());
       expect(window.location.pathname.match(/results/)[0]).toBeTruthy();
       fiItem = screen.getByText(fi.NAME);
       userEvent.click(fiItem);
-      notesTextArea = getNotesTextArea();
-      expect(notesTextArea).toHaveValue(savedValue);
+
+      expect(getNotes()).toHaveTextContent(savedValue);
     });
 
     it('Favorite property persists between search & results pages', () => {
@@ -108,7 +100,7 @@ describe('Institution Page', () => {
       expect(favBtn.getFavIcon()).toBeTruthy();
       expect(favBtn.getNotFavIcon()).toBeNull();
 
-      userEvent.click(goBackToResults);
+      userEvent.click(getGoBackBtn());
       expect(window.location.pathname).toBe(PATHS.RESULTS);
       expect(favBtn.getFavIcon()).toBeTruthy();
       expect(favBtn.getNotFavIcon()).toBeNull();
@@ -116,8 +108,8 @@ describe('Institution Page', () => {
       userEvent.click(favBtn.getFavBtn(true));
       expect(favBtn.getFavIcon()).toBeNull();
       expect(favBtn.getNotFavIcon()).toBeTruthy();
-
       fiItem = screen.getByText(fi.NAME);
+
       userEvent.click(fiItem);
       expect(window.location.pathname).toBe(PATHS.INSTITUTION + fi.ID);
       expect(favBtn.getFavIcon()).toBeNull();

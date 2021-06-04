@@ -67,8 +67,9 @@ export const FDIC_API_MOCK = () =>
     .get((uri) => uri.includes(INVALID_ZIP))
     .reply(200, FDIC_NO_RESULTS_RESPONSE, headers) // no 404 if no results
     //
+    .persist()
     .get((uri) => uri.includes(FDIC_REJECTS))
-    .reply(500, 'error', headers)
+    .reply(500, 'rejected', headers)
     //
     .get((uri) => uri.includes(ZIP_REJECTS))
     .reply(200, FDIC_RESULTS_RESPONSE, headers)

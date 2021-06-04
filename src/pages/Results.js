@@ -1,13 +1,10 @@
 import { Button, Card, Container, Typography } from '@material-ui/core';
-import { PATHS } from 'App';
+import { PATHS, GoTo } from 'store/GoToProvider';
 import { FavoriteButton } from 'components/FavoriteButton';
 import { useContext, useState } from 'react';
-import { useHistory } from 'react-router';
 import { SearchActions, SearchResults, SearchState } from 'store/SearchProvider';
 
 export const Results = () => {
-  const history = useHistory();
-
   const { loading, error } = useContext(SearchState);
   const { searchNearbyAndAddToResults } = useContext(SearchActions);
   const { zipSearched, nearbyZips, fiList } = useContext(SearchResults);
@@ -17,10 +14,6 @@ export const Results = () => {
   const showNearbyBtn = !showingNearbyResults && nearbyZips.length > 0;
   const errorMessage = getErrorMessage(error);
 
-  const goBack = () => {
-    history.push(PATHS.SEARCH);
-  };
-
   const onNearbyClick = () => {
     setShowingNearbyResults(true);
     searchNearbyAndAddToResults();
@@ -28,7 +21,6 @@ export const Results = () => {
 
   return (
     <ResultsJSX
-      goBack={goBack}
       zipSearched={zipSearched}
       fiList={fiList}
       showNearbyBtn={showNearbyBtn}
@@ -40,7 +32,6 @@ export const Results = () => {
 };
 
 const ResultsJSX = ({
-  goBack,
   zipSearched,
   fiList,
   showNearbyBtn,
@@ -50,9 +41,6 @@ const ResultsJSX = ({
 }) => {
   return (
     <Container maxWidth='sm'>
-      <Button variant='contained' color='primary' onClick={goBack}>
-        {resultsText.goBackBtn}
-      </Button>
       <Typography variant='h6' component='h2' style={{ textAlign: 'center' }}>
         Financial Institutions Near {zipSearched}
       </Typography>
@@ -71,10 +59,10 @@ const ResultsJSX = ({
 };
 
 const FiItem = ({ item }) => {
-  const history = useHistory();
+  const goTo = useContext(GoTo);
 
   const onContainerClick = () => {
-    history.push(`${PATHS.INSTITUTION}${item.ID}`);
+    goTo(`${PATHS.INSTITUTION}${item.ID}`);
   };
 
   return (
